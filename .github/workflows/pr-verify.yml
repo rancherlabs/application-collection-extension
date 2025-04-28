@@ -49,7 +49,7 @@ jobs:
   verify-ui:
     name: Verify UI
     runs-on: ubuntu-latest
-    needs: generate-backend-client
+    needs: generate-resources
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
