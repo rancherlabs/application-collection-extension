@@ -38,14 +38,13 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Lint markdown files
-        uses: DavidAnson/markdownlint-cli2-action@v19
-        with: 
-          config: markdownlint.yml 
-          globs: |
-            **/*.md
-            !ui/node_modules 
-            !backend/node_modules 
+      - name: Setup Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Run markdownlint
+        run: npx markdownlint-cli -c ./markdownlint.yml --ignore ui/node_modules --ignore backend/node_modules "**/*.md"
 
   verify-ui:
     name: Verify UI
