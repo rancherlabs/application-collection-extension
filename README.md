@@ -22,11 +22,11 @@ In this section you will learn how to start playing with the extension.
 To install the extension:
 
 1. Open Docker Desktop.
-1. From the Docker Desktop dashboard, select the _Extensions_ tab. The Extensions Marketplace opens on the _Browse_ tab.
+1. From the Docker Desktop dashboard, select the *Extensions* tab. The Extensions Marketplace opens on the *Browse* tab.
 1. Browse for "SUSE Application Collection".
-1. Select _Install_.
+1. Select *Install*.
 
-From here, you can select _Open_ to access the extension. The extension also appears in the left-hand menu and in the _Manage_ tab.
+From here, you can select *Open* to access the extension. The extension also appears in the left-hand menu and in the *Manage* tab.
 
 If this doesn't work, or the extension doesn't show up in the browser, you can also try running:
 
@@ -44,11 +44,11 @@ Useful additional links:
 To install the extension:
 
 1. Open Rancher Desktop.
-1. From the Rancher Desktop dashboard, select the _Extensions_ tab. The Extensions Catalog opens on the _Catalog_ tab.
+1. From the Rancher Desktop dashboard, select the *Extensions* tab. The Extensions Catalog opens on the *Catalog* tab.
 1. Search for "SUSE Application Collection".
-1. Select _Install_.
+1. Select *Install*.
 
-Once installed, the extension will appear in the left-hand menu and in the _Installed_ tab.
+Once installed, the extension will appear in the left-hand menu and in the *Installed* tab.
 
 If this doesn't work, or the extension doesn't show up in the browser, you can also try running:
 
@@ -72,7 +72,8 @@ If you work with Docker Desktop, these are the main guidelines you should follow
 
 ## Debug with Rancher Desktop
 
-Rancher Desktop also lets you build, update and debug running extensions with the development tools of any browser. However, note that here there's no support for hot reloading yet.
+Rancher Desktop also lets you build, update and debug running extensions with the development tools of any browser.
+ However, note that here there's no support for hot reloading yet.
 
 If you work with Rancher Desktop, these are the key guidelines to build and debug any extension:
 
