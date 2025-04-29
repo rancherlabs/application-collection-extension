@@ -7,7 +7,7 @@ We want to make clear that this document is not a usual contribution document, b
 
 ## Providing feedback
 
-We manage the community feedback through GitHub **discussions**. Whe think that's a good way to engage with you, the users,
+We manage the community feedback through GitHub **discussions**. We think that's a good way to engage with you, the users,
  and have single point for public threads.
 If you think you found a bug or have a feature request go to the
  [discussions page](https://github.com/rancherlabs/application-collection-extension/discussions) and then:

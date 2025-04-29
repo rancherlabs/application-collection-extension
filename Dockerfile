@@ -1,4 +1,4 @@
-FROM registry.suse.com/suse/sle15:15.6 AS fetcher
+FROM registry.suse.com/bci/bci-base:15.6 AS fetcher
 
 ENV BINS_DIR=/tmp/binaries/darwin
 ENV HELM_VERSION=3.12.2
@@ -89,15 +89,15 @@ LABEL org.opencontainers.image.title="SUSE Application Collection" \
         <ol>\
             <li>Have a target kubernetes cluster configured in your context</li>\
             <li>Install the extension</li>\
-            <li><a href=\"https:\/\/docs.apps.rancher.io\/get-started\/authentication\/#create-a-personal-access-token\">Generate an access token</a> and configure the authentication</li>\
+            <li><a href=\"https://docs.apps.rancher.io/get-started/authentication/#create-a-personal-access-token\">Generate an access token</a> and configure the authentication</li>\
             <li>Start deploying workloads</li>\
         </ol>\
         " \
     com.docker.extension.publisher-url="https://apps.rancher.io/" \
     com.docker.extension.additional-urls="[\
-        {\"title\":\"Product page\",\"url\":\"https:\/\/www.suse.com\/products\/rancher\/application-collection\"},\
-        {\"title\":\"Web application\",\"url\":\"https:\/\/apps.rancher.io\"},\
-        {\"title\":\"Documentation\",\"url\":\"https:\/\/docs.apps.rancher.io\"}\
+        {\"title\":\"Product page\",\"url\":\"https://www.suse.com/products/rancher/application-collection\"},\
+        {\"title\":\"Web application\",\"url\":\"https://apps.rancher.io\"},\
+        {\"title\":\"Documentation\",\"url\":\"https://docs.apps.rancher.io\"}\
     ]" \
     com.docker.extension.changelog="<ul><li>Initial release</li></ul>"
 
