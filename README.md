@@ -7,12 +7,6 @@ This project is composed of:
 * The [ui](./ui): a [React](https://es.react.dev/) app that handles the main user interation.
 * A [backend](./backend): an [express](https://expressjs.com/) server that extends the features of the frontend.
 
-## Table of Contents
-
-* [Getting started](#getting-started)
-* [Debug with Docker Desktop](#debug-with-docker-desktop)
-* [Debug with Rancher Desktop](#debug-with-rancher-desktop)
-
 ## Getting started
 
 In this section you will learn how to start playing with the extension.
