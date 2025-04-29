@@ -10,7 +10,7 @@ env:
 
 jobs:
   generate-resources:
-    name: Generate Resources
+    name: Generate resources
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
@@ -97,7 +97,7 @@ jobs:
         run: npm run build
   
   verify-backend:
-    name: Verify Backend
+    name: Verify backend
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code

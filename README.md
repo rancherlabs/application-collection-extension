@@ -1,6 +1,6 @@
 # SUSE Application Collection
 
-This extension will help you installing, managing and uninstalling workloads from the Application Collection.
+This extension will help you installing, managing and uninstalling workloads from Application Collection.
 
 This project is composed of:
 
