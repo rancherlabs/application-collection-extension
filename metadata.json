@@ -1,0 +1,49 @@
+{
+  "icon": "rancher-logo-cow-blue.svg",
+  "vm": {
+    "composefile": "docker-compose.yaml",
+    "exposes": {
+      "socket": "application-collection-extension.sock"
+    }
+  },
+  "ui": {
+    "dashboard-tab": {
+      "title": "Application Collection",
+      "src": "index.html",
+      "root": "ui",
+      "backend": { 
+        "socket": "application-collection-extension.sock" 
+      }
+    }
+  },
+  "host": {
+    "binaries": [
+      {
+        "darwin": [
+          {
+            "path": "/binaries/darwin/helm"
+          },
+          {
+            "path": "/binaries/darwin/kubectl"
+          }
+        ],
+        "windows": [
+          {
+            "path": "/binaries/windows/helm.exe"
+          },
+          {
+            "path": "/binaries/windows/kubectl.exe"
+          }
+        ],
+        "linux": [
+          {
+            "path": "/binaries/linux/helm"
+          },
+          {
+            "path": "/binaries/linux/kubectl"
+          }
+        ]
+      }
+    ]
+  }
+}

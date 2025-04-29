@@ -1,0 +1,21 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@stylistic"
+  ],
+  "rules": {
+    "@stylistic/indent": ["error", 2],
+    "@stylistic/object-curly-spacing": [2, "always"],
+    "@stylistic/quotes": ["error", "single"],
+    "@stylistic/jsx-quotes": ["error", "prefer-single"],
+    "@stylistic/semi": ["error", "never"],
+    "@stylistic/jsx-curly-spacing": [2, { "when": "always", "children": true }],
+    "@stylistic/jsx-child-element-spacing": 2,
+    "camelcase": ["error", {
+      "properties": "never"
+    }],
+    "no-console": ["error", {
+      "allow": ["warn", "error"]
+    }]
+  }
+}

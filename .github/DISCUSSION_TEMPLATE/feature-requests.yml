@@ -1,0 +1,19 @@
+title: "Feature request"
+labels: ["feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to contribute! Please, fill in this form with as much details as possible.
+  - type: input
+    attributes:
+      label: Title
+      description: Brief line with the key terms of the feature.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Description
+      description: Make sure it as extensive and full of details as possible. This will help you making yourself clear and reachable from the discussions browser.
+    validations:
+      required: true

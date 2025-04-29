@@ -1,0 +1,34 @@
+# https://github.com/DavidAnson/markdownlint/blob/main/schema/.markdownlint.yaml
+
+# MD003/heading-style/header-style - Heading style
+MD003:
+  # Heading style
+  style: "atx"
+
+# MD004/ul-style - Unordered list style
+MD004:
+  # List style
+  style: "asterisk"
+
+# MD035/hr-style - Horizontal rule style
+MD035:
+  # Horizontal rule style
+  style: "---"
+
+# MD049/emphasis-style - Emphasis style should be consistent
+MD049:
+  # Emphasis style
+  style: "asterisk"
+
+# MD050/strong-style - Strong style should be consistent
+MD050:
+  # Strong style
+  style: "asterisk"
+
+MD013:
+  # Number of characters
+  line_length: 140
+  # Number of characters for headings
+  heading_line_length: 140
+  # Number of characters for code blocks
+  code_block_line_length: 140

@@ -1,0 +1,23 @@
+{
+  "env": {
+    "es6": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 8
+  },
+  "plugins": [
+    "@stylistic"
+  ],
+  "rules": {
+    "@stylistic/indent": ["error", 2],
+    "@stylistic/object-curly-spacing": [2, "always"],
+    "@stylistic/quotes": ["error", "single"],
+    "@stylistic/semi": ["error", "never"],
+    "camelcase": ["error", {
+      "properties": "never"
+    }],
+    "no-console": ["error", {
+      "allow": ["warn", "error"]
+    }]
+  }
+}
