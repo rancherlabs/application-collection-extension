@@ -1,4 +1,4 @@
-title: "Feature requests"
+title: "Feature request"
 labels: ["feature"]
 body:
   - type: markdown
@@ -9,7 +9,6 @@ body:
     attributes:
       label: Title
       description: Brief line with the key terms of the feature.
-      placeholder: "Example: Support automatic application updates"
     validations:
       required: true
   - type: textarea
