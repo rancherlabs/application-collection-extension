@@ -157,8 +157,8 @@ jobs:
         if: env.changes == 'true'
         with:
           registry: dp.apps.rancher.io
-          username: ${{ secrets.APPLICATION_COLLECTION_USERNAME }}
-          password: ${{ secrets.APPLICATION_COLLECTION_TOKEN }}
+          username: ${{ secrets.APPCO_SA_USERNAME }}
+          password: ${{ secrets.APPCO_SA_PASSWORD }}
 
       # Ref: https://docs.docker.com/build/ci/github-actions/multi-platform/
       - name: Set up QEMU
