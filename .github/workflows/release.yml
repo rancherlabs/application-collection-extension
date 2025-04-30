@@ -31,12 +31,18 @@ jobs:
           username: ${{ secrets.APPCO_SA_USERNAME }}
           password: ${{ secrets.APPCO_SA_PASSWORD }}
 
+      - name: Fetch Dockerhub credentials
+        uses: rancher-eio/read-vault-secrets@main
+        with:
+          secrets: |
+            secret/data/github/repo/${{ github.repository }}/dockerhub/credentials username | DOCKER_USERNAME ;
+            secret/data/github/repo/${{ github.repository }}/dockerhub/credentials password | DOCKER_PASSWORD
+
       - name: Login to Dockerhub
         uses: docker/login-action@v3
         with:
-          # TODO: use the right credentials
-          username: ${{ secrets.APPCO_SA_USERNAME }}
-          password: ${{ secrets.APPCO_SA_PASSWORD }}
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ env.DOCKER_PASSWORD }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
