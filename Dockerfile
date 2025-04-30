@@ -101,7 +101,7 @@ LABEL org.opencontainers.image.title="SUSE Application Collection" \
         {\"title\":\"Web application\",\"url\":\"https://apps.rancher.io\"},\
         {\"title\":\"Documentation\",\"url\":\"https://docs.apps.rancher.io\"}\
     ]" \
-    com.docker.extension.changelog="https://github.com/rancherlabs/application-collection-extension/releases/tag/${RELEASE_VERSION}"
+    com.docker.extension.changelog="See full <a href=\"https://github.com/rancherlabs/application-collection-extension/releases/tag/${RELEASE_VERSION}\">change log</a>."
 
 COPY --from=fetcher /tmp/binaries /binaries
 COPY --from=fetcher /tmp/binaries/linux /usr/bin
