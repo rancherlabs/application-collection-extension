@@ -21,7 +21,6 @@ jobs:
         run: |
           BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
           VERSION="${BRANCH_NAME#release/}"
-          echo "Versión detectada: $VERSION"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Checkout source code
