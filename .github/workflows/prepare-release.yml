@@ -41,7 +41,7 @@ jobs:
 
       - name: Version UI
         working-directory: ui
-        run: npm version ${{ steps.extract_version.outputs.version }} --git-tag-version=false -m "Prepare UI for release %s"
+        run: npm version ${{ steps.extract_version.outputs.version }} --git-tag-version=false
       
       - name: Push changes
         run: git push origin
