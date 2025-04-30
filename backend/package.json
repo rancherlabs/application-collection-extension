@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "postversion": "git add package.json package-lock.json && git commit -a -m \"Prepare backend for release $npm_package_version\""
   },
   "dependencies": {
     "body-parser": "^1.20.3",
