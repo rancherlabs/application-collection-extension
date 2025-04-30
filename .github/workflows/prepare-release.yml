@@ -14,7 +14,7 @@ jobs:
   prepare-release:
     name: Release preparation steps
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'release/')
+    if: startsWith(github.event.pull_request.head.ref, 'release/')
     steps:
       - name: Extract version name
         id: extract_version
