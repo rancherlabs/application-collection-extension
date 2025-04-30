@@ -49,6 +49,8 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           push: true
+          build-args: |
+            RELEASE_VERSION=${{ steps.extract_version.outputs.version }}
           tags: ${{ env.IMAGE_NAME }}:latest,${{ env.IMAGE_NAME }}:${{ steps.extract_version.outputs.version }}
       
       - name: Tag and push release version

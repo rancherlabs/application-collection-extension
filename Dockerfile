@@ -62,6 +62,8 @@ COPY backend /backend
 
 FROM dp.apps.rancher.io/containers/nodejs:22
 
+ARG RELEASE_VERSION=latest
+
 LABEL org.opencontainers.image.title="SUSE Application Collection" \
     org.opencontainers.image.description="Integrate the Application Collection into your development lifecycle" \
     org.opencontainers.image.vendor="SUSE LLC" \
@@ -99,7 +101,7 @@ LABEL org.opencontainers.image.title="SUSE Application Collection" \
         {\"title\":\"Web application\",\"url\":\"https://apps.rancher.io\"},\
         {\"title\":\"Documentation\",\"url\":\"https://docs.apps.rancher.io\"}\
     ]" \
-    com.docker.extension.changelog="<ul><li>Initial release</li></ul>"
+    com.docker.extension.changelog="https://github.com/rancherlabs/application-collection-extension/releases/tag/${RELEASE_VERSION}"
 
 COPY --from=fetcher /tmp/binaries /binaries
 COPY --from=fetcher /tmp/binaries/linux /usr/bin
