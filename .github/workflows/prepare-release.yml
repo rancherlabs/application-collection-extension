@@ -1,0 +1,47 @@
+name: Prepare upcoming release
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+
+env:
+  NODE_VERSION: 22.x
+
+jobs:
+  prepare-ui:
+    name: UI release preparation
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'release/')
+    steps:
+      - name: Extract version name
+        id: extract_version
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          VERSION="${BRANCH_NAME#release/}"
+          echo "Versión detectada: $VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Checkout source code
+        uses: actions/checkout@v4
+          
+      - name: Configure git
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+      - name: Setup Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: ui/package-lock.json
+
+      - name: Version UI
+        working-directory: ui
+        run: npm version ${{ steps.extract_version.outputs.version }} --git-tag-version=false -m "Prepare UI for release %s"
+      
+      - name: Push changes
+        run: git push origin

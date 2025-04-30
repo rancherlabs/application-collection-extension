@@ -2,13 +2,14 @@ name: Release
 
 on:
   pull_request:
-    types: 
-      - closed
     branches:
       - main
+    types: 
+      - closed
 
 jobs:
   release:
+    name: Release image and generate GitHub release
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'release/')
     steps:
