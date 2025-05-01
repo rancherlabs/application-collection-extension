@@ -1,5 +1,7 @@
 # SUSE Application Collection
 
+![SUSE Application Collection](/assets/SUSE_ApplicationCollection_pos-green-horizontal.svg)
+
 This extension will help you installing, managing and uninstalling workloads from Application Collection.
 
 This project is composed of:
