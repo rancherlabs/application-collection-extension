@@ -2,14 +2,14 @@
 
 ![SUSE Application Collection](/assets/SUSE_ApplicationCollection_pos-green-horizontal.svg)
 
-This extension will help you installing, managing and uninstalling workloads from Application Collection.
+This extension will help you installing, managing and uninstalling workloads from [SUSE Application Collection](https://apps.rancher.io).
 
 This project is composed of:
 
 * The [ui](./ui): a [React](https://es.react.dev/) app that handles the main user interation.
 * A [backend](./backend): an [express](https://expressjs.com/) server that extends the features of the frontend.
 
-## Getting started
+## Get started
 
 In this section you will learn how to start playing with the extension.
 
