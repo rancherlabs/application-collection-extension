@@ -67,7 +67,7 @@ LABEL org.opencontainers.image.title="SUSE Application Collection" \
     org.opencontainers.image.vendor="SUSE LLC" \
     com.docker.desktop.extension.api.version="0.3.4" \
     com.docker.extension.categories="kubernetes,utility-tools" \
-    com.docker.desktop.extension.icon="https://raw.githubusercontent.com/rancherlabs/application-collection-extension/refs/heads/main/assets/logo.svg" \
+    com.docker.desktop.extension.icon="https://raw.githubusercontent.com/rancherlabs/application-collection-extension/refs/heads/main/assets/rancher-logo-cow-blue.png" \
     com.docker.extension.screenshots="[\
         {\"alt\":\"Collection\", \"url\":\"https://raw.githubusercontent.com/rancherlabs/application-collection-extension/refs/heads/main/assets/01_collection.png\"}, \
         {\"alt\":\"Application Details\", \"url\":\"https://raw.githubusercontent.com/rancherlabs/application-collection-extension/refs/heads/main/assets/02_application-details.png\"}, \
