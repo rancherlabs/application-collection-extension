@@ -67,7 +67,7 @@ LABEL org.opencontainers.image.title="SUSE Application Collection" \
     org.opencontainers.image.vendor="SUSE LLC" \
     com.docker.desktop.extension.api.version="0.3.4" \
     com.docker.extension.categories="kubernetes,utility-tools" \
-    com.docker.desktop.extension.icon="https://raw.githubusercontent.com/rancherlabs/application-collection-extension/refs/heads/main/assets/logo.svg" \
+    com.docker.desktop.extension.icon="https://raw.githubusercontent.com/rancherlabs/application-collection-extension/refs/heads/main/assets/rancher-logo-cow-blue.svg" \
     com.docker.extension.screenshots="[\
         {\"alt\":\"Collection\", \"url\":\"https://raw.githubusercontent.com/rancherlabs/application-collection-extension/refs/heads/main/assets/01_collection.png\"}, \
         {\"alt\":\"Application Details\", \"url\":\"https://raw.githubusercontent.com/rancherlabs/application-collection-extension/refs/heads/main/assets/02_application-details.png\"}, \
@@ -105,7 +105,7 @@ COPY --from=fetcher /tmp/binaries /binaries
 COPY --from=fetcher /tmp/binaries/linux /usr/bin
 COPY docker-compose.yaml .
 COPY metadata.json .
-COPY rancher-logo-cow-blue.svg .
+COPY assets/rancher-logo-cow-blue.svg .
 COPY --from=client-builder /ui/build ui
 COPY --from=backend-builder /backend backend
 WORKDIR /backend
