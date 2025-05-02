@@ -105,7 +105,7 @@ COPY --from=fetcher /tmp/binaries /binaries
 COPY --from=fetcher /tmp/binaries/linux /usr/bin
 COPY docker-compose.yaml .
 COPY metadata.json .
-COPY rancher-logo-cow-blue.svg .
+COPY assets/rancher-logo-cow-blue.svg .
 COPY --from=client-builder /ui/build ui
 COPY --from=backend-builder /backend backend
 WORKDIR /backend
