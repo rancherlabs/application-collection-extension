@@ -1,0 +1,62 @@
+name: Release
+
+on:
+  push:
+
+jobs:
+  release:
+    name: Test release workflow
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Login to Application Collection
+        uses: docker/login-action@v3
+        with:
+          registry: dp.apps.rancher.io
+          username: ${{ secrets.APPCO_SA_USERNAME }}
+          password: ${{ secrets.APPCO_SA_PASSWORD }}
+
+      - name: Fetch Dockerhub credentials
+        uses: rancher-eio/read-vault-secrets@main
+        with:
+          secrets: |
+            secret/data/github/repo/${{ github.repository }}/dockerhub/credentials username | DOCKER_USERNAME ;
+            secret/data/github/repo/${{ github.repository }}/dockerhub/credentials password | DOCKER_PASSWORD
+
+      - name: Login to Dockerhub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ env.DOCKER_PASSWORD }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        env:
+          IMAGE_NAME: rancherlabs/application-collection-extension
+        with:
+          platforms: linux/amd64,linux/arm64
+          push: false
+          tags: ${{ env.IMAGE_NAME }}:latest,${{ env.IMAGE_NAME }}
+      
+      - name: Test commit
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          echo "foo" > bar.txt
+          git add bar.txt
+          git commit -m "Test commit"
+          git push
+
