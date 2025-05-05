@@ -57,4 +57,4 @@ jobs:
         run: npm version ${{ steps.extract_version.outputs.version }} --git-tag-version=false
       
       - name: Push release preparation changes
-        run: git push origin
+        run: git push
