@@ -1,0 +1,59 @@
+name: Prepare upcoming release
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+
+env:
+  NODE_VERSION: 22.x
+
+jobs:
+  prepare-release:
+    name: Release preparation steps
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.pull_request.head.ref, 'release/')
+    steps:
+      - name: Extract version name
+        id: extract_version
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          VERSION="${BRANCH_NAME#release/}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Checkout source code
+        uses: actions/checkout@v4
+          
+      - name: Configure git
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+      - name: Setup Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      # Workaround for https://github.com/npm/npm/issues/9111
+      - name: npm version hack (ui)
+        working-directory: ui
+        run: mkdir .git
+
+      - name: Version UI
+        working-directory: ui
+        run: npm version ${{ steps.extract_version.outputs.version }} --git-tag-version=false
+
+      # Workaround for https://github.com/npm/npm/issues/9111
+      - name: npm version hack (backend)
+        working-directory: backend
+        run: mkdir .git
+
+      - name: Version backend
+        working-directory: backend
+        run: npm version ${{ steps.extract_version.outputs.version }} --git-tag-version=false
+      
+      - name: Push release preparation changes
+        run: git push origin
