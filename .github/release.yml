@@ -5,6 +5,9 @@ changelog:
         - breaking
     - title: 🎉 Added
       labels:
+        - feature
+    - title: 🌟 Improved
+      labels:
         - enhancement
     - title: 🐛 Fixed
       labels:
