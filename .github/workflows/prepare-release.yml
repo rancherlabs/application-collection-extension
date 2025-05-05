@@ -35,7 +35,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
 
       # Workaround for https://github.com/npm/npm/issues/9111
       - name: npm version hack (ui)
