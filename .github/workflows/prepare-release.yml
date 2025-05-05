@@ -4,8 +4,6 @@ on:
   pull_request:
     branches:
       - main
-    types:
-      - opened
 
 env:
   NODE_VERSION: 22.x
@@ -20,7 +18,7 @@ jobs:
         id: extract_version
         run: |
           BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
-          VERSION="${BRANCH_NAME#release/}"
+          VERSION="0.1.0"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Checkout source code
@@ -57,4 +55,4 @@ jobs:
         run: npm version ${{ steps.extract_version.outputs.version }} --git-tag-version=false
       
       - name: Push release preparation changes
-        run: git push origin
+        run: git push
