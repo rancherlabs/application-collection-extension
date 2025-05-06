@@ -78,7 +78,7 @@ jobs:
             await github.rest.repos.createRelease({
               owner: context.repo.owner,
               repo: context.repo.repo, 
-              tag_name: ${{ steps.extract_version.outputs.version }},
+              tag_name: "${{ steps.extract_version.outputs.version }}",
               generate_release_notes: true
             });
   
