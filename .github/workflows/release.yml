@@ -1,11 +1,7 @@
 name: Release
 
 on:
-  pull_request:
-    branches:
-      - main
-    types: 
-      - closed
+  push:
 
 jobs:
   release:
@@ -21,7 +17,7 @@ jobs:
         run: |
           BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
           VERSION="${BRANCH_NAME#release/}"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version=0.1.1" >> $GITHUB_OUTPUT
 
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -58,7 +54,7 @@ jobs:
           IMAGE_NAME: rancherlabs/application-collection-extension
         with:
           platforms: linux/amd64,linux/arm64
-          push: true
+          push: false
           build-args: |
             RELEASE_VERSION=${{ steps.extract_version.outputs.version }}
           tags: ${{ env.IMAGE_NAME }}:latest,${{ env.IMAGE_NAME }}:${{ steps.extract_version.outputs.version }}
@@ -69,12 +65,3 @@ jobs:
           git config user.email "actions@github.com"
           git tag -a "${{ steps.extract_version.outputs.version }}" -m "Release ${{ steps.extract_version.outputs.version }}"
           git push origin "${{ steps.extract_version.outputs.version }}"
-
-      - name: Create GitHub release notes
-        uses: actions/github-script@v7
-        with:
-          script: |
-            await github.request(`POST /repos/${{ github.repository }}/releases`, {
-              tag_name: ${{ steps.extract_version.outputs.version }},
-              generate_release_notes: true
-            });
