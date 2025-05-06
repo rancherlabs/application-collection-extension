@@ -55,7 +55,7 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v6
         env:
-          IMAGE_NAME: rancherlabs/application-collection-extension
+          IMAGE_NAME: rancher/application-collection-extension
         with:
           platforms: linux/amd64,linux/arm64
           push: true
