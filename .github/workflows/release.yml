@@ -70,7 +70,19 @@ jobs:
           git config user.email "actions@github.com"
           git tag -a "${{ steps.extract_version.outputs.version }}" -m "Release ${{ steps.extract_version.outputs.version }}"
           git push origin "${{ steps.extract_version.outputs.version }}"
-      
+  
+  generate-release-notes:
+    name: Generate GitHub release notes
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract version name
+        id: extract_version
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          VERSION="${BRANCH_NAME#release/}"
+          echo "version=test" >> $GITHUB_OUTPUT
+
       - name: Create fake GitHub release notes
         uses: actions/github-script@v7
         with:
@@ -81,4 +93,4 @@ jobs:
               tag_name: ${{ steps.extract_version.outputs.version }},
               generate_release_notes: true
             });
-  
+
