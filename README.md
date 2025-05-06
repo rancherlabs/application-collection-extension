@@ -27,7 +27,7 @@ From here, you can select *Open* to access the extension. The extension also app
 If this doesn't work, or the extension doesn't show up in the browser, you can also try running:
 
 ```sh
-docker extension install rancherlabs/application-collection-extension
+docker extension install rancher/application-collection-extension
 ```
 
 Useful additional links:
@@ -49,7 +49,7 @@ Once installed, the extension will appear in the left-hand menu and in the *Inst
 If this doesn't work, or the extension doesn't show up in the browser, you can also try running:
 
 ```sh
-rdctl extension install rancherlabs/application-collection-extension
+rdctl extension install rancher/application-collection-extension
 ```
 
 Useful additional links:
