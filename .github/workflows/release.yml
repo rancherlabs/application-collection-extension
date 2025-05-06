@@ -1,15 +1,15 @@
 name: Release
 
-on: push
+on:
+  push:
 
 jobs:
   release:
-    name: Release image and generate GitHub release
+    name: Test release workflow
     permissions:
       contents: write
       id-token: write
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'release/')
     steps:
       - name: Extract version name
         id: extract_version
