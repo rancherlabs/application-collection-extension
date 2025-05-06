@@ -100,6 +100,7 @@ LABEL org.opencontainers.image.title="SUSE Application Collection" \
         {\"title\":\"Product page\",\"url\":\"https://www.suse.com/products/rancher/application-collection\"},\
         {\"title\":\"Web application\",\"url\":\"https://apps.rancher.io\"},\
         {\"title\":\"Documentation\",\"url\":\"https://docs.apps.rancher.io\"}\
+        {\"title\":\"Support\",\"url\":\"https://github.com/rancherlabs/application-collection-extension/discussions\"}\
     ]" \
     com.docker.extension.changelog="See full <a href=\"https://github.com/rancherlabs/application-collection-extension/releases/tag/${RELEASE_VERSION}\">change log</a>."
 
