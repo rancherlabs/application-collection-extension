@@ -7,6 +7,7 @@ jobs:
   release:
     name: Test release workflow
     permissions:
+      actions: write
       contents: write
       id-token: write
     runs-on: ubuntu-latest
@@ -16,7 +17,7 @@ jobs:
         run: |
           BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
           VERSION="${BRANCH_NAME#release/}"
-          echo "version=0.1.1" >> $GITHUB_OUTPUT
+          echo "version=test" >> $GITHUB_OUTPUT
 
       - name: Checkout source code
         uses: actions/checkout@v4
