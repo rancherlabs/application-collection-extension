@@ -5,7 +5,7 @@ import { Buffer } from 'buffer'
 
 function configuration() {
   const configuration = new Configuration()
-  configuration.basePath = 'https://api.apps.rancher.io'
+  configuration.basePath = import.meta.env.PROD ? 'https://api.apps.rancher.io' : 'http://localhost:3000/api'
 
   return configuration
 }
