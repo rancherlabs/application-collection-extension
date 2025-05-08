@@ -1,23 +1,24 @@
 FROM registry.suse.com/bci/bci-base:15.6 AS fetcher
 
+ARG TARGETARCH
 ENV BINS_DIR=/tmp/binaries/darwin
 ENV HELM_VERSION=3.12.2
 ENV KUBECTL_VERSION=1.29.3
 
 RUN mkdir -p ${BINS_DIR}
-RUN curl -s -o helm-v${HELM_VERSION}-darwin-arm64.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-darwin-arm64.tar.gz \
-    && tar -zxvf helm-v${HELM_VERSION}-darwin-arm64.tar.gz \
-    && mv darwin-arm64/helm ${BINS_DIR}/helm \
-    && curl -LO "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/darwin/arm64/kubectl" \
+RUN curl -s -o helm-v${HELM_VERSION}-darwin-${TARGETARCH}.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-darwin-${TARGETARCH}.tar.gz \
+    && tar -zxvf helm-v${HELM_VERSION}-darwin-${TARGETARCH}.tar.gz \
+    && mv darwin-${TARGETARCH}/helm ${BINS_DIR}/helm \
+    && curl -LO "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/darwin/${TARGETARCH}/kubectl" \
     && chmod +x ./kubectl \
     && mv kubectl ${BINS_DIR}/kubectl
 
 ENV BINS_DIR=/tmp/binaries/linux
 RUN mkdir -p ${BINS_DIR}
-RUN curl -s -o helm-v${HELM_VERSION}-linux-amd64.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz \
-    && tar -zxvf helm-v${HELM_VERSION}-linux-amd64.tar.gz \
-    && mv linux-amd64/helm ${BINS_DIR}/helm \
-    && curl -LO "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl" \
+RUN curl -s -o helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz \
+    && tar -zxvf helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz \
+    && mv linux-${TARGETARCH}/helm ${BINS_DIR}/helm \
+    && curl -LO "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${TARGETARCH}/kubectl" \
     && chmod +x ./kubectl \
     && mv kubectl ${BINS_DIR}/kubectl
 
