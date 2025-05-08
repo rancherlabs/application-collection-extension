@@ -14,7 +14,7 @@ export default function SettingsPage() {
       <Typography variant='h5' sx={ { mb: 3 } }>Used to navigate and install the collection</Typography>
       <AuthenticationForm />
       <Typography variant='h3' sx={ { mt: 3 } }>Kubernetes</Typography>
-      <Typography variant='h5' sx={ { mb: 3 } }>Configure the k8s clsuter where workloads will be installed</Typography>
+      <Typography variant='h5' sx={ { mb: 3 } }>Configure the cluster where workloads will be installed</Typography>
       <K8sContextForm />
     </>
   )
