@@ -62,7 +62,7 @@ export function Layout() {
         <Container maxWidth={ isSmallScreen ? 'md' : 'lg' }>
           <Typography variant='h2'>Authorization required</Typography>
           <Typography variant='h5' gutterBottom>This extension requires login.</Typography>
-          <Typography variant='body1' sx={ { my: 3 } }>More info about authentication methods in our documentation site <Typography variant='code' sx={ { mx: 1 } }>Get started &gt; Authentication</Typography> section.</Typography>
+          <Typography variant='body1' sx={ { my: 3 } }>Learn more about authentication methods in the Authentication section of our documentation site.</Typography>
           <AuthenticationForm />
         </Container>
       </Box>
