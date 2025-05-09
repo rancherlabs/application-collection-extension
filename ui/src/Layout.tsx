@@ -1,8 +1,8 @@
 import Button from '@mui/material/Button'
-import { Box, Container, IconButton, Link, Snackbar, Stack, Theme, Typography, useMediaQuery } from '@mui/material'
+import { Box, Container, Stack, Theme, Typography, useMediaQuery } from '@mui/material'
 import { useAuth, useAuthDispatch } from './AuthContext'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { AppsOutlined, Close, EditOutlined, KeyboardArrowLeft, SettingsOutlined } from '@mui/icons-material'
+import { AppsOutlined, EditOutlined, KeyboardArrowLeft, SettingsOutlined } from '@mui/icons-material'
 import AuthenticationForm from './pages/SettingsPage/components/AuthenticationForm'
 import { useEffect } from 'react'
 import { createDockerDesktopClient } from '@docker/extension-api-client'
@@ -62,7 +62,7 @@ export function Layout() {
         <Container maxWidth={ isSmallScreen ? 'md' : 'lg' }>
           <Typography variant='h2'>Authorization required</Typography>
           <Typography variant='h5' gutterBottom>This extension requires login.</Typography>
-          <Typography variant='body1' sx={ { my: 3 } }>Create an <Link href='https://docs.apps.rancher.io/get-started/authentication/#create-a-personal-access-token' target='_blank'>access token</Link> and start using this extension.</Typography>
+          <Typography variant='body1' sx={ { my: 3 } }>More info about authentication methods in our documentation site <Typography variant='code' sx={ { mx: 1 } }>Get started &gt; Authentication</Typography> section.</Typography>
           <AuthenticationForm />
         </Container>
       </Box>
