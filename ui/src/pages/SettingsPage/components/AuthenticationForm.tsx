@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useAuth, useAuthDispatch } from '../../../AuthContext'
-import { usersClient } from '../../../clients/backend'
 import { dockerLogin, dockerLogout } from '../../../clients/docker'
 import { createDockerDesktopClient } from '@docker/extension-api-client'
 import { kubernetesLogin, kubernetesLogout } from '../../../clients/kubectl'
@@ -22,85 +21,75 @@ export default function AuthenticationForm() {
     if (username && token) {
       const newAuth = `${username}:${token}`
       setState('loading')
-      usersClient(newAuth).loginUser()
-        .then(response => {
-          if (response.status == 200) {
-            const errors: string[] = []
-            dockerLogout(ddClient)
-              .catch(e => console.error('Unexpected error running docker logout', e))
-              .finally(() => dockerLogin(ddClient, username, token)
-                .catch(e => {
-                  console.error('Unexpected error running docker login', e)
-                  errors.push('Error running docker login, make sure the daemon is started')
-                })
-                .finally(() => kubernetesLogout(ddClient)
-                  .catch(e => console.error('Unexpected error deleting kubernetes secret', e))
-                  .finally(() => kubernetesLogin(ddClient, username, token)
-                    .catch(e => {
-                      console.error('Unexpected error creating kubernetes secret', e)
-                      errors.push('Error creating kubernetes secret, make sure the cluster is up and reachable')
-                    })
-                    .finally(() => {
-                      helmLogout(ddClient)
-                        .catch(e => console.error('Unexpected error running helm logout', e))
-                        .finally(() => {
-                          helmLogin(ddClient, username, token)
-                            .catch(e => {
-                              console.error('Unexpected error running helm registry login', e)
-                              errors.push('Error running helm registry login, make sure you can reach dp.apps.rancher.io')
-                            })
+      const errors: string[] = []
+      dockerLogout(ddClient)
+        .catch(e => console.error('Unexpected error running docker logout', e))
+        .finally(() => dockerLogin(ddClient, username, token)
+          .catch(e => {
+            console.error('Unexpected error running docker login', e)
+            errors.push('Error running docker login, make sure the daemon is started')
+          })
+          .finally(() => kubernetesLogout(ddClient)
+            .catch(e => console.error('Unexpected error deleting kubernetes secret', e))
+            .finally(() => kubernetesLogin(ddClient, username, token)
+              .catch(e => {
+                console.error('Unexpected error creating kubernetes secret', e)
+                errors.push('Error creating kubernetes secret, make sure the cluster is up and reachable')
+              })
+              .finally(() => {
+                helmLogout(ddClient)
+                  .catch(e => console.error('Unexpected error running helm logout', e))
+                  .finally(() => {
+                    helmLogin(ddClient, username, token)
+                      .catch(e => {
+                        console.error('Unexpected error running helm registry login', e)
+                        errors.push('Error running helm registry login, make sure you can reach dp.apps.rancher.io')
+                      })
+                      .finally(() => {
+                        new Promise<void>((resolve, reject) => {
+                          const timeout = setTimeout(() => reject(), 10000)
+                          ddClient.extension.vm?.service?.post('/user/logout', {})
+                            .catch(() => console.error('Unexpected error commanding helm logout in backend'))
                             .finally(() => {
-                              new Promise<void>((resolve, reject) => {
-                                const timeout = setTimeout(() => reject(), 10000)
-                                ddClient.extension.vm?.service?.post('/user/logout', {})
-                                  .catch(() => console.error('Unexpected error commanding helm logout in backend'))
-                                  .finally(() => {
-                                    ddClient.extension.vm?.service?.post('/user/login', { username, password: token })
-                                      .catch((e) => {
-                                        console.error('Unexpected error commanding helm login in backend', e)
-                                        errors.push('Internal backend error persisting authentication, make sure the extension backend is running')
-                                      })
-                                      .finally(() => {
-                                        if (errors.length == 0) {
-                                          dispatch({ 
-                                            type: 'set', 
-                                            payload: {
-                                              auth: newAuth,
-                                              errors: errors.map(e => { return { message: e, dismissed: false } })
-                                            } })
-                                          setState('saved')
-                                        } else {
-                                          dispatch({ 
-                                            type: 'set', 
-                                            payload: {
-                                              errors: errors.map(e => { return { message: e, dismissed: false } })
-                                            } })
-                                          setState('error')
-                                        }
-                                        clearTimeout(timeout)
-                                        resolve()
-                                      })
-                                  })
-                              }).catch(() => {
-                                errors.push('Cannot connect to extension backend. Make sure the backend container is running.')
-                                dispatch({ 
-                                  type: 'set', 
-                                  payload: {
-                                    errors: errors.map(e => { return { message: e, dismissed: false } })
-                                  } })
-                                setState('error')
-                              })
-                              
+                              ddClient.extension.vm?.service?.post('/user/login', { username, password: token })
+                                .catch((e) => {
+                                  console.error('Unexpected error commanding helm login in backend', e)
+                                  errors.push('Internal backend error persisting authentication, make sure the extension backend is running')
+                                })
+                                .finally(() => {
+                                  if (errors.length == 0) {
+                                    dispatch({ 
+                                      type: 'set', 
+                                      payload: {
+                                        auth: newAuth,
+                                        errors: errors.map(e => { return { message: e, dismissed: false } })
+                                      } })
+                                    setState('saved')
+                                  } else {
+                                    dispatch({ 
+                                      type: 'set', 
+                                      payload: {
+                                        errors: errors.map(e => { return { message: e, dismissed: false } })
+                                      } })
+                                    setState('error')
+                                  }
+                                  clearTimeout(timeout)
+                                  resolve()
+                                })
                             })
+                        }).catch(() => {
+                          errors.push('Cannot connect to extension backend. Make sure the backend container is running.')
+                          dispatch({ 
+                            type: 'set', 
+                            payload: {
+                              errors: errors.map(e => { return { message: e, dismissed: false } })
+                            } })
+                          setState('error')
                         })
-                    }))))
-              
-          }
-        })
-        .catch(() => {
-          setError('Invalid authentication pair')
-          setState('error')
-        })
+                              
+                      })
+                  })
+              }))))
     }
   }
 
