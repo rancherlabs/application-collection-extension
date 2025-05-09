@@ -8,9 +8,9 @@
     "postversion": "git add package.json package-lock.json && git commit -a -m \"Prepare backend for release $npm_package_version\""
   },
   "dependencies": {
-    "body-parser": "^1.20.3",
-    "express": "~4.16.1",
-    "yaml": "^2.7.0"
+    "body-parser": "^2.2.0",
+    "express": "^5.1.0",
+    "yaml": "^2.7.1"
   },
   "devDependencies": {
     "@stylistic/eslint-plugin": "^2.10.1",
