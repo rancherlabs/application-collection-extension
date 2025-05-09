@@ -3,7 +3,7 @@ FROM registry.suse.com/bci/bci-base:15.6 AS fetcher
 ARG TARGETARCH
 ENV BINS_DIR=/tmp/binaries/darwin
 ENV HELM_VERSION=3.17.3
-ENV KUBECTL_VERSION=1.32.4
+ENV KUBECTL_VERSION=1.33.0
 
 RUN mkdir -p ${BINS_DIR}
 RUN curl -s -o helm-v${HELM_VERSION}-darwin-${TARGETARCH}.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-darwin-${TARGETARCH}.tar.gz \
