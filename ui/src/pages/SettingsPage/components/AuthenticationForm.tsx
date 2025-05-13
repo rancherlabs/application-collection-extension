@@ -4,8 +4,8 @@ import { dockerLogin, dockerLogout } from '../../../clients/docker'
 import { createDockerDesktopClient } from '@docker/extension-api-client'
 import { kubernetesLogin, kubernetesLogout } from '../../../clients/kubectl'
 import { helmLogin, helmLogout } from '../../../clients/helm'
-import { Box, Button, Card, CardContent, CircularProgress, List, ListItem, ListItemText, Stack, TextField, Tooltip, Typography } from '@mui/material'
-import { Check, WarningAmberOutlined } from '@mui/icons-material'
+import { Box, Button, Card, CardContent, CircularProgress, FormControl, IconButton, InputAdornment, InputLabel, List, ListItem, ListItemText, OutlinedInput, Stack, TextField, Tooltip, Typography } from '@mui/material'
+import { Check, Visibility, VisibilityOff, WarningAmberOutlined } from '@mui/icons-material'
 
 const ddClient = createDockerDesktopClient()
 
@@ -16,6 +16,7 @@ export default function AuthenticationForm() {
   const [ token, setToken ] = useState<string | undefined>(auth?.auth?.split(':')[1])
   const [ state, setState ] = useState<'loading' | 'saved' | 'error'>()
   const [ error, setError ] = useState<string>()
+  const [ showPassword, setShowPassword ] = useState<boolean>(false)
 
   async function saveAuth() {
     if (username && token) {
@@ -62,6 +63,7 @@ export default function AuthenticationForm() {
                                           errors: errors.map(e => { return { message: e, dismissed: false } })
                                         } })
                                       setState('saved')
+                                      setError(undefined)
                                     } else {
                                       dispatch({ 
                                         type: 'set', 
@@ -113,14 +115,31 @@ export default function AuthenticationForm() {
           error={ error !== undefined && error !== '' }
           onChange={ evt => setUsername(evt.target.value as string) }
           sx={ { mr: 2 } } />
-        <TextField 
-          label='Access Token'
-          value={ token?.toString() || '' }
-          variant='outlined'
+        <FormControl 
+          variant='outlined' 
           size='small'
-          error={ error !== undefined && error !== '' }
-          onChange={ evt => setToken(evt.target.value as string) }
-          sx={ { mr: 2 } } />
+          sx={ { mr: 2 } } >
+          <InputLabel htmlFor='access-token'>Access Token</InputLabel>
+          <OutlinedInput
+            id='access-token'
+            type={ showPassword ? 'text' : 'password' }
+            label='Access Token'
+            value={ token?.toString() || '' }
+            error={ error !== undefined && error !== '' }
+            onChange={ evt => setToken(evt.target.value as string) }
+            endAdornment={
+              <InputAdornment position='end'>
+                <IconButton
+                  aria-label='toggle password visibility'
+                  onClick={ () => setShowPassword((show) => !show) }
+                  onMouseDown={ e => e.preventDefault() }
+                  edge='end'>
+                  { showPassword ? <VisibilityOff /> : <Visibility /> }
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+        </FormControl>
         <Button 
           startIcon={ state === 'loading' && <CircularProgress size={ 16 } color='inherit' /> }
           disabled={ state === 'loading' }
