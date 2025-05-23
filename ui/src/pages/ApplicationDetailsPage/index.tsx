@@ -4,7 +4,7 @@ import { ApplicationDTO, ApplicationDTOPackagingFormatEnum, ComponentDTO } from 
 import { useEffect, useState } from 'react'
 import { applicationsClient, componentsClient } from '../../clients/backend'
 import { useLoaderData } from 'react-router-dom'
-import BranchesTable from './components/BranchesTable'
+import BranchesList from './components/BranchesList'
 
 export async function loader({ params }: { params: any }): Promise<string> {
   return params.slugName
@@ -46,8 +46,8 @@ export default function ApplicationDetailsPage() {
         <Skeleton variant='text' width='100%' sx={ { mt: 2 } } />
         <Skeleton variant='text' width='100%' />
         <Skeleton variant='text' width='50%' sx={ { mb: 2.5 } } />
-        <Typography variant='h3'>Manage versions</Typography>
-        <Typography variant='h5' sx={ { mb: 3 } }>Install, pause, stop and update workloads</Typography>
+        <Typography variant='h3'>Manage branches</Typography>
+        <Typography variant='h5' sx={ { mb: 3 } }>Run new workloads in your cluster</Typography>
         <Skeleton variant='rectangular' height={ 100 } width='100%' />
       </>
     )
@@ -70,8 +70,8 @@ export default function ApplicationDetailsPage() {
       </Stack>
       <Typography sx={ { my: 2 } }>{ application.description }</Typography>
       <Typography variant='h3'>Manage branches</Typography>
-      <Typography variant='h5' sx={ { mb: 3 } }>Install, pause, stop and update workloads</Typography>
-      <BranchesTable branches={ component.branches } packagingFormat={ application.packaging_format } />
+      <Typography variant='h5' sx={ { mb: 3 } }>Run new workloads in your cluster</Typography>
+      <BranchesList branches={ component.branches } packagingFormat={ application.packaging_format } />
     </>
   )
 }
