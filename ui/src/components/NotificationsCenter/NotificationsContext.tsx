@@ -11,7 +11,7 @@ export type Notification = {
 }
 
 export type NotificationAction = {
-  type: 'add' | 'dismiss' | 'delete', 
+  type: 'add' | 'dismiss' | 'undismiss' | 'delete', 
   payload: Notification,
 }
 
@@ -23,10 +23,20 @@ function notificationsReducer(notifications: Notification[], action: Notificatio
     case 'dismiss':
       return notifications
         .map(n => { 
-          return { 
-            ...n,
-            dismissed: n === action.payload
-          } 
+          if (n == action.payload) {
+            return { ...n, dismissed: true }
+          }
+          
+          return n
+        })
+    case 'undismiss':
+      return notifications
+        .map(n => { 
+          if (n == action.payload) {
+            return { ...n, dismissed: false }
+          }
+          
+          return n
         })
     case 'delete':
       return notifications.filter(n => n !== action.payload)

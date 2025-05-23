@@ -1,4 +1,4 @@
-import { Badge, Button, Card, CardActionArea, CardActions, CardContent, Stack, Typography } from '@mui/material'
+import { Button, Card, CardActions, CardContent, Stack, Typography } from '@mui/material'
 import { Notification, useNotificationsDispatch } from '../NotificationsContext'
 import StatusIcon from './StatusIcon'
 import moment from 'moment'
@@ -8,6 +8,14 @@ import { NotificationsOffOutlined, NotificationsOutlined } from '@mui/icons-mate
 export default function NotificationItem({ notification, onClose }: { notification: Notification, onClose?: () => void }) {
   const navigate = useNavigate()
   const dispatch = useNotificationsDispatch()
+
+  function toggleNotificationState() {
+    if (notification.dismissed) {
+      dispatch({ type: 'undismiss', payload: notification })
+    } else {
+      dispatch({ type: 'dismiss', payload: notification })
+    }
+  }
 
   return (
     <Card
@@ -50,6 +58,7 @@ export default function NotificationItem({ notification, onClose }: { notificati
               value='dismiss'
               size='small'
               color={ notification.dismissed ? 'inherit' : 'primary' }
+              onClick={ () => toggleNotificationState() }
               sx={ { 
                 opacity: notification.dismissed ? 0.5 : 1, 
                 minWidth: 0,
