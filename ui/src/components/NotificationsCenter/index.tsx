@@ -1,4 +1,4 @@
-import { useNotificationsContext } from './NotificationsContext'
+import { useNotificationsContext, useNotificationsDispatch } from './NotificationsContext'
 import NotificationItem from './NotificationItem'
 import { Button, Drawer, Stack, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 import { useState } from 'react'
@@ -6,8 +6,20 @@ import { useState } from 'react'
 
 export default function NotificationsCenter({ id, open, onClose }: { id?: string, open: boolean, onClose: () => any }) {
   const notifications = useNotificationsContext()
+  const dispatch = useNotificationsDispatch()
 
   const [ filter, setFilter ] = useState<'all' | 'unread'>('all')
+
+  function handleFilterToggle(newFilter: any) {
+    if (newFilter != null) {
+      setFilter(newFilter)
+    }
+  }
+
+  function markAllRead() {
+    notifications.filter(n => !n.dismissed)
+      .forEach(n => dispatch({ type: 'dismiss', payload: n }))
+  }
 
   return (
     <Drawer
@@ -34,7 +46,7 @@ export default function NotificationsCenter({ id, open, onClose }: { id?: string
           color='primary'
           value={ filter }
           exclusive
-          onChange={ (e, newFilter) => setFilter(newFilter) }
+          onChange={ (e, newFilter) => handleFilterToggle(newFilter) }
           aria-label='Platform'
           size='small'>
           <ToggleButton value='all' sx={ { py: 0 } }>
@@ -44,7 +56,9 @@ export default function NotificationsCenter({ id, open, onClose }: { id?: string
             Unread
           </ToggleButton>
         </ToggleButtonGroup>
-        <Button size='small'>Mark all as read</Button>
+        <Button 
+          size='small'
+          onClick={ () => markAllRead() }>Mark all as read</Button>
       </Stack>
       <Stack 
         spacing={ 1 }>
