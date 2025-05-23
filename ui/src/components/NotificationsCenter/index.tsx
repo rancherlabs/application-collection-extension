@@ -37,6 +37,7 @@ export default function NotificationsCenter({ id, open, onClose }: { id?: string
         direction='row'
         justifyContent='space-between'
         alignItems='center'
+        spacing={ 2 }
         sx={ { p: 2, pt: 1 } }>
         <Typography 
           variant='h4'>
@@ -62,6 +63,10 @@ export default function NotificationsCenter({ id, open, onClose }: { id?: string
       </Stack>
       <Stack 
         spacing={ 1 }>
+        {
+          notifications.length === 0 &&
+          <Typography color='text.secondary' sx={ { p: 2 } }>You don't have notifications yet.</Typography>
+        }
         {
           notifications
             .filter(n => filter === 'unread' ? !n.dismissed : n )
