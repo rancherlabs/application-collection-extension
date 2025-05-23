@@ -69,7 +69,8 @@ export default function NotificationItem({ notification, onClose }: { notificati
                 navigate(notification.href as string)
                 if (onClose) onClose()
               } }
-              variant='contained'>
+              variant='contained'
+              size='small'>
               { notification.actionText }
             </Button>
           </CardActions>
