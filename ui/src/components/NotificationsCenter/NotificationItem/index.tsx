@@ -3,6 +3,7 @@ import { Notification, useNotificationsDispatch } from '../NotificationsContext'
 import StatusIcon from './StatusIcon'
 import moment from 'moment'
 import { useNavigate } from 'react-router-dom'
+import { NotificationsOffOutlined, NotificationsOutlined } from '@mui/icons-material'
 
 export default function NotificationItem({ notification, onClose }: { notification: Notification, onClose?: () => void }) {
   const navigate = useNavigate()
@@ -15,50 +16,54 @@ export default function NotificationItem({ notification, onClose }: { notificati
         maxWidth: '400px', 
         '&:hover': { borderColor: 'primary.main', boxShadow: 2 } } 
       }>
-      <CardActionArea 
-        sx={ { cursor: 'default' } }>
-        <CardContent 
-          sx={ { 
-            p: 2,
-            pb: notification.href ? 0 : 2,
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-          } }>
-          <StatusIcon status={ notification.type } />
+      <CardContent 
+        sx={ { 
+          px: 2,
+          pb: notification.href ? 0 : 2,
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+        } }>
+        <StatusIcon status={ notification.type } />
+        <Stack
+          direction='column' >
           <Stack
-            direction='column' >
-            <Stack
-              direction='row'
-              alignItems='center'
-              justifyContent='space-between'
-              spacing={ 2 }>
-              <Typography 
-                variant='h5' 
-                color='text.primary'>
-                { notification.title }
-              </Typography>
-              <Badge 
-                color='primary' 
-                variant='dot' 
-                sx={ { 
-                  display: notification.dismissed ? 'none' : 'inline-block',
-                  position: 'relative',
-                  transform: 'none'
-                } } />
-            </Stack>
+            direction='row'
+            alignItems='start'
+            justifyContent='space-between'
+            spacing={ 2 }>
             <Typography 
-              variant='caption' 
-              color='text.secondary'
-              gutterBottom>
-              { moment(notification.timestamp).calendar() }
+              variant='h5' 
+              color='text.primary'>
+              { notification.title }
             </Typography>
-            <Typography
-              variant='body2'>{ notification.description }</Typography>
+            <Button 
+              disableRipple
+              value='dismiss'
+              size='small'
+              color={ notification.dismissed ? 'inherit' : 'primary' }
+              sx={ { 
+                opacity: notification.dismissed ? 0.5 : 1, 
+                minWidth: 0,
+                '&:hover': { backgroundColor: 'initial' } } }>
+              { notification.dismissed ?
+                <NotificationsOffOutlined fontSize='small' /> :
+                <NotificationsOutlined fontSize='small' /> 
+              }
+            </Button>
           </Stack>
-        </CardContent>
-        {
-          notification.href && 
+          <Typography 
+            variant='caption' 
+            color='text.secondary'
+            gutterBottom>
+            { moment(notification.timestamp).calendar() }
+          </Typography>
+          <Typography
+            variant='body2'>{ notification.description }</Typography>
+        </Stack>
+      </CardContent>
+      {
+        notification.href && 
           <CardActions
             sx={ {
               flexDirection: 'row-reverse',
@@ -74,8 +79,7 @@ export default function NotificationItem({ notification, onClose }: { notificati
               { notification.actionText }
             </Button>
           </CardActions>
-        }
-      </CardActionArea>
+      }
     </Card>
   )
 }
