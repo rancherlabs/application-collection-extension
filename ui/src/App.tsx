@@ -8,6 +8,7 @@ import { AuthProvider } from './AuthContext'
 import { Layout } from './Layout'
 import { useMemo } from 'react'
 import { MaterialDesignContent, SnackbarProvider } from 'notistack'
+import NotificationsProvider from './components/NotificationsCenter/NotificationsContext'
 
 const themeOptions = (mode: 'light' | 'dark' = 'light') => {
   return {
@@ -187,7 +188,9 @@ export function App() {
     <ThemeProvider theme={ theme }>
       <SnackbarProvider maxSnack={ 3 } Components={ { default: StyledMaterialDesignContent } }>
         <AuthProvider>
-          <RouterProvider router={ router } />
+          <NotificationsProvider>
+            <RouterProvider router={ router } />
+          </NotificationsProvider>
         </AuthProvider>
       </SnackbarProvider>
     </ThemeProvider>

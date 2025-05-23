@@ -1,14 +1,16 @@
 import Button from '@mui/material/Button'
-import { Box, Container, Stack, Theme, Typography, useMediaQuery } from '@mui/material'
+import { Badge, Box, Container, Stack, Theme, Typography, useMediaQuery } from '@mui/material'
 import { useAuth, useAuthDispatch } from './AuthContext'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { AppsOutlined, EditOutlined, KeyboardArrowLeft, SettingsOutlined } from '@mui/icons-material'
+import { AppsOutlined, EditOutlined, KeyboardArrowLeft, NotificationsNone, SettingsOutlined } from '@mui/icons-material'
 import AuthenticationForm from './pages/SettingsPage/components/AuthenticationForm'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { createDockerDesktopClient } from '@docker/extension-api-client'
 import { ServiceError } from '@docker/extension-api-client-types/dist/v1'
 import { usersClient } from './clients/backend'
 import { useSnackbar } from 'notistack'
+import { useNotificationsContext } from './components/NotificationsCenter/NotificationsContext'
+import NotificationsCenter from './components/NotificationsCenter'
 
 const ddClient = createDockerDesktopClient()
 
@@ -41,6 +43,9 @@ async function askForCredentials(dispatch: (action: any) => any, currentAttempt:
 }
 
 export function Layout() {
+  const notifications = useNotificationsContext()
+  const [ notificationsCenterOpen, setNotificationsCenterOpen ] = useState<boolean>(false)
+
   const auth = useAuth()
   const dispatch = useAuthDispatch()
   const navigate = useNavigate()
@@ -69,23 +74,42 @@ export function Layout() {
     )
   }
 
+  // TODO: fetch the notifications from the backend if they are not already loaded
   return (
-    <Box component='main' sx={ { display: 'flex', alignItems: 'start', width: '100%', flexGrow: 1, py: 3 } }>
-      <Container maxWidth={ isSmallScreen ? 'md' : 'lg' }>
-        <Outlet />
-      </Container>
-      <Stack direction='column' alignItems='start' width='fit-content'>
-        <Button onClick={ () => navigate('/') } sx={ { mr: 2 } }><AppsOutlined sx={ { mr: 2 } } />Applications</Button>
-        <Button onClick={ () => navigate('/workloads') } sx={ { mr: 2 } }><SettingsOutlined sx={ { mr: 2 } } />Workloads</Button>
-        <Button onClick={ () => navigate('/settings') } sx={ { mr: 2 } }><EditOutlined sx={ { mr: 2 } } />Settings</Button>
-        { 
-          location?.pathname !== '/' && 
+    <>
+      <Box component='main' sx={ { display: 'flex', alignItems: 'start', width: '100%', flexGrow: 1, py: 3 } }>
+        <Container maxWidth={ isSmallScreen ? 'md' : 'lg' }>
+          <Outlet />
+        </Container>
+        <Stack direction='column' alignItems='start' width='fit-content' sx={ { mr: 2 } }>
+          <Button onClick={ () => setNotificationsCenterOpen(true) }>
+            {
+              notifications.find(n => !n.dismissed) ?
+                <Badge 
+                  color='secondary'
+                  variant='dot'
+                  sx={ { mr: 2 } } >
+                  <NotificationsNone />
+                </Badge> :
+                <NotificationsNone sx={ { mr: 2 } } />
+            }
+            Notifications
+          </Button>
+          <Button onClick={ () => navigate('/') }><AppsOutlined sx={ { mr: 2 } } />Applications</Button>
+          <Button onClick={ () => navigate('/workloads') }><SettingsOutlined sx={ { mr: 2 } } />Workloads</Button>
+          <Button onClick={ () => navigate('/settings') }><EditOutlined sx={ { mr: 2 } } />Settings</Button>
+          { 
+            location?.pathname !== '/' && 
           location?.pathname !== '/applications' && 
           location?.pathname !== '/workloads' &&
           location?.pathname !== '/settings' &&
-          <Button onClick={ () => navigate(-1) } sx={ { mr: 2 } }><KeyboardArrowLeft sx={ { mr: 2 } } /> Back</Button> 
-        }
-      </Stack>
-    </Box>
+          <Button onClick={ () => navigate(-1) }><KeyboardArrowLeft sx={ { mr: 2 } } /> Back</Button> 
+          }
+        </Stack>
+      </Box>
+      <NotificationsCenter
+        open={ notificationsCenterOpen }
+        onClose={ () => setNotificationsCenterOpen(false) } />
+    </>
   )
 }
