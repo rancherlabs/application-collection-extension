@@ -32,11 +32,19 @@ export default function NotificationItem({ notification, onClose }: { notificati
             alignItems='start'
             justifyContent='space-between'
             spacing={ 2 }>
-            <Typography 
-              variant='h5' 
-              color='text.primary'>
-              { notification.title }
-            </Typography>
+            <Stack>
+              <Typography 
+                variant='h5' 
+                color='text.primary'>
+                { notification.title }
+              </Typography>
+              <Typography 
+                variant='caption' 
+                color='text.secondary'
+                gutterBottom>
+                { moment(notification.timestamp).calendar() }
+              </Typography>
+            </Stack>
             <Button 
               disableRipple
               value='dismiss'
@@ -52,12 +60,6 @@ export default function NotificationItem({ notification, onClose }: { notificati
               }
             </Button>
           </Stack>
-          <Typography 
-            variant='caption' 
-            color='text.secondary'
-            gutterBottom>
-            { moment(notification.timestamp).calendar() }
-          </Typography>
           <Typography
             variant='body2'>{ notification.description }</Typography>
         </Stack>
