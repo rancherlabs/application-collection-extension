@@ -26,16 +26,21 @@ function notificationsReducer(notifications: Notification[], action: Notificatio
 
       return action.payload as Notification[]
     case 'add':
-      if (Array.isArray(action.payload)) return notifications
+      if (Array.isArray(action.payload) || 
+        notifications.find(n => n.id === (action.payload as Notification).id)) {
+        return notifications
+      }
 
       ddClient.extension.vm?.service?.post('/notifications', action.payload)
         .catch(error => console.error(error))
+
       return [ ...notifications, action.payload as Notification ]
     case 'dismiss':
       if (Array.isArray(action.payload)) return notifications
 
       ddClient.extension.vm?.service?.put(`/notifications/${action.payload.id}`, { ...action.payload, dismissed: true })
         .catch(error => console.error(error))
+
       return notifications
         .map(n => { 
           if (n.id === (action.payload as Notification).id) {
@@ -49,6 +54,7 @@ function notificationsReducer(notifications: Notification[], action: Notificatio
 
       ddClient.extension.vm?.service?.put(`/notifications/${action.payload.id}`, { ...action.payload, dismissed: false })
         .catch(error => console.error(error))
+
       return notifications
         .map(n => { 
           if (n.id === (action.payload as Notification).id) {
@@ -77,7 +83,23 @@ export default function NotificationsProvider({ children }: { children: React.Re
 
   useEffect(() => {
     ddClient.extension.vm?.service?.get('/notifications')
-      .then((data) => dispatch({ type: 'load', payload: data as Notification[] }))
+      .then((data) => {
+        const backendNotifications = data as Notification[]
+        
+        if (backendNotifications.length === 0) {
+          const welcomeNotification: Notification = {
+            id: '-1',
+            title: 'Welcome to Application Collection extension!',
+            description: 'Go to https://docs.apps.rancher.io/ to learn how to get started.',
+            type: 'info',
+            dismissed: false,
+            timestamp: new Date().getTime()
+          }
+          dispatch({ type: 'add', payload: welcomeNotification })
+        } else {
+          dispatch({ type: 'load', payload: backendNotifications })
+        }
+      })
       .catch(err => console.error('Unexpected error fetching notifications from backend', err))
   }, [])
 

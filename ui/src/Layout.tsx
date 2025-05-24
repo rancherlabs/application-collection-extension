@@ -74,7 +74,6 @@ export function Layout() {
     )
   }
 
-  // TODO: fetch the notifications from the backend if they are not already loaded
   return (
     <>
       <Box component='main' sx={ { display: 'flex', alignItems: 'start', width: '100%', flexGrow: 1, py: 3 } }>
