@@ -1,8 +1,10 @@
 volumes:
   helm:
+  data:
 
 services:
   docker-desktop-extension:
     image: ${DESKTOP_PLUGIN_IMAGE}
     volumes:
       - helm:/root/.config/helm
+      - data:/root/data

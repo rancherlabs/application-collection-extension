@@ -1,6 +1,8 @@
-import { createContext, Dispatch, useContext, useReducer } from 'react'
+import { createDockerDesktopClient } from '@docker/extension-api-client'
+import { createContext, Dispatch, useContext, useEffect, useReducer } from 'react'
 
 export type Notification = {
+  id: string,
   title: string,
   description: string,
   type: 'info' | 'success' | 'warning' | 'error',
@@ -11,34 +13,55 @@ export type Notification = {
 }
 
 export type NotificationAction = {
-  type: 'add' | 'dismiss' | 'undismiss' | 'delete', 
-  payload: Notification,
+  type: 'load' | 'add' | 'dismiss' | 'undismiss' | 'delete', 
+  payload: Notification | Notification[],
 }
 
 function notificationsReducer(notifications: Notification[], action: NotificationAction): Notification[] {
-  // TODO: update backend
+  const ddClient = createDockerDesktopClient()
+
   switch (action.type) {
+    case 'load': 
+      if (!Array.isArray(action.payload)) return notifications
+
+      return action.payload as Notification[]
     case 'add':
-      return [ ...notifications, action.payload ]
+      if (Array.isArray(action.payload)) return notifications
+
+      ddClient.extension.vm?.service?.post('/notifications', action.payload)
+        .catch(error => console.error(error))
+      return [ ...notifications, action.payload as Notification ]
     case 'dismiss':
+      if (Array.isArray(action.payload)) return notifications
+
+      ddClient.extension.vm?.service?.put(`/notifications/${action.payload.id}`, { ...action.payload, dismissed: true })
+        .catch(error => console.error(error))
       return notifications
         .map(n => { 
-          if (n == action.payload) {
+          if (n.id === (action.payload as Notification).id) {
             return { ...n, dismissed: true }
           }
           
           return n
         })
     case 'undismiss':
+      if (Array.isArray(action.payload)) return notifications
+
+      ddClient.extension.vm?.service?.put(`/notifications/${action.payload.id}`, { ...action.payload, dismissed: false })
+        .catch(error => console.error(error))
       return notifications
         .map(n => { 
-          if (n == action.payload) {
+          if (n.id === (action.payload as Notification).id) {
             return { ...n, dismissed: false }
           }
           
           return n
         })
     case 'delete':
+      if (Array.isArray(action.payload)) return notifications
+
+      ddClient.extension.vm?.service?.delete(`/notifications/${action.payload.id}`)
+        .catch(error => console.error(error))
       return notifications.filter(n => n !== action.payload)
     default:
       return notifications
@@ -49,49 +72,14 @@ const NotificationsContext = createContext<Notification[]>([])
 const NotificationsDispatchContext = createContext<Dispatch<NotificationAction>>(() => [])
 
 export default function NotificationsProvider({ children }: { children: React.ReactNode }) {
-  // TODO: read initial notifications from backend
-  const initialNotifications: Notification[] = [
-    {
-      title: 'Welcome to Application Collection extension!',
-      description: 'Go to https://docs.apps.rancher.io/ to learn how to get started.',
-      type: 'info',
-      dismissed: true,
-      timestamp: new Date().getTime() - 1000 * 60 * 60 * 24 * 40,
-    },
-    {
-      title: 'Application successfully installed',
-      description: 'The application xxxyyyZZZ-1234567 has been successfully deployed. Click here to view the release details.',
-      type: 'success',
-      dismissed: false,
-      href: '/workloads',
-      actionText: 'View details',
-      timestamp: new Date().getTime() - 1000 * 60 * 60 * 24 * 2,
-    },
-    {
-      title: 'Docker authentication failed',
-      description: 'Couldn\'t authenticate with docker because of lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum.',
-      type: 'warning',
-      dismissed: true,
-      timestamp: new Date().getTime() - 1000 * 60 * 60 * 24 * 1,
-    },
-    {
-      title: 'Deployment failed',
-      description: 'The installation of xxxyyyZZZ-1234567 failed with: lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum.',
-      type: 'error',
-      dismissed: false,
-      href: '/workloads',
-      actionText: 'View details',
-      timestamp: new Date().getTime() - 1000 * 60 * 60 * 12,
-    },
-    {
-      title: 'Welcome to Application Collection extension!',
-      description: 'Go to https://docs.apps.rancher.io/ to learn how to get started.',
-      type: 'info',
-      dismissed: true,
-      timestamp: new Date().getTime(),
-    },
-  ]
-  const [ notifications, dispatch ] = useReducer(notificationsReducer, initialNotifications)
+  const ddClient = createDockerDesktopClient()
+  const [ notifications, dispatch ] = useReducer(notificationsReducer, [])
+
+  useEffect(() => {
+    ddClient.extension.vm?.service?.get('/notifications')
+      .then((data) => dispatch({ type: 'load', payload: data as Notification[] }))
+      .catch(err => console.error('Unexpected error fetching notifications from backend', err))
+  }, [])
 
   return (
     <NotificationsContext.Provider value={ notifications }>
