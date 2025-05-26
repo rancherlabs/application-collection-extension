@@ -178,9 +178,7 @@ function BranchRow({ branch, version, artifact }: { branch: { name: string, patt
           artifact={ artifact }
           version={ version }
           isOpen={ installDialogOpen }
-          onSubmit={ (result) => {
-            setRunningInstance(result)
-            setStatus(result.status)
+          onSubmit={ () => {
             setInstallDialogOpen(false)
             navigate('/workloads')
           } }

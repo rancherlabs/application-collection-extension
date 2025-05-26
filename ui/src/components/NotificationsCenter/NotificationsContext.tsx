@@ -5,7 +5,7 @@ export type Notification = {
   id: string,
   title: string,
   description: string,
-  type: 'info' | 'success' | 'warning' | 'error',
+  type: 'info' | 'progress' | 'success' | 'warning' | 'error',
   dismissed: boolean,
   timestamp: number,
   href?: string,
@@ -13,7 +13,7 @@ export type Notification = {
 }
 
 export type NotificationAction = {
-  type: 'load' | 'add' | 'dismiss' | 'undismiss' | 'delete', 
+  type: 'load' | 'add' | 'dismiss' | 'undismiss' | 'delete' | 'update', 
   payload: Notification | Notification[],
 }
 
@@ -59,6 +59,20 @@ function notificationsReducer(notifications: Notification[], action: Notificatio
         .map(n => { 
           if (n.id === (action.payload as Notification).id) {
             return { ...n, dismissed: false }
+          }
+          
+          return n
+        })
+    case 'update':
+      if (Array.isArray(action.payload)) return notifications
+
+      ddClient.extension.vm?.service?.put(`/notifications/${action.payload.id}`, action.payload)
+        .catch(error => console.error(error))
+
+      return notifications
+        .map(n => { 
+          if (n.id === (action.payload as Notification).id) {
+            return Object.assign(n, action.payload)
           }
           
           return n

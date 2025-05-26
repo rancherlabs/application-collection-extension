@@ -137,23 +137,6 @@ export default function WorkloadsPage() {
                 workload={ workload } 
                 updateVersion={ updates ? updates.find(u => u.workload === workload.name)?.updateVersion || null : undefined }
                 updateBranchVersion={ updates ? updates.find(u => u.workload === workload.name)?.updateBranchVersion || null : undefined }
-                onUpdate={ (newRelease) => {
-                  setUpdates(updates?.map(u => {
-                    if (u.workload === newRelease.name) {
-                      u.updateVersion = undefined
-                    }
-
-                    return u
-                  }))
-
-                  setWorkloads(workloads.map(w => {
-                    if (w.name === newRelease.name) {
-                      w = Object.assign(w, newRelease)
-                    }
-
-                    return w
-                  }))
-                } }
                 onUninstall={ () => {
                   setWorkloads(workloads.filter(w => w.name !== workload.name))
                 } } />) :

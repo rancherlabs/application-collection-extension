@@ -34,6 +34,7 @@ export default function NotificationItem({ notification, onClose }: { notificati
         } }>
         <StatusIcon status={ notification.type } />
         <Stack
+          flexGrow={ 1 }
           direction='column' >
           <Stack
             direction='row'
