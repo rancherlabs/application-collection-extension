@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { applicationsClient, componentsClient } from '../../clients/backend'
 import { useLoaderData } from 'react-router-dom'
 import BranchesList from './components/BranchesList'
+import { LoadingBranchCard } from './components/BranchesList/BranchCard'
 
 export async function loader({ params }: { params: any }): Promise<string> {
   return params.slugName
@@ -48,7 +49,10 @@ export default function ApplicationDetailsPage() {
         <Skeleton variant='text' width='50%' sx={ { mb: 2.5 } } />
         <Typography variant='h3'>Manage branches</Typography>
         <Typography variant='h5' sx={ { mb: 3 } }>Run new workloads in your cluster</Typography>
-        <Skeleton variant='rectangular' height={ 100 } width='100%' />
+        <Stack spacing={ 2 }>
+          <LoadingBranchCard />
+          <LoadingBranchCard />
+        </Stack>
       </>
     )
   }

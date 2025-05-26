@@ -64,6 +64,7 @@ const themeOptions = (mode: 'light' | 'dark' = 'light') => {
       h4: {
         fontSize: '1.125rem',
         fontWeight: '400',
+        lineHeight: '20px',
         '+ h5, + h6': {
           marginTop: '6px'
         }
@@ -79,8 +80,9 @@ const themeOptions = (mode: 'light' | 'dark' = 'light') => {
         color: mode === 'dark' ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
       },
       body1: {
-        fontSize: '0.875rem'
-      }
+        fontSize: '0.875rem',
+        lineHeight: '18px',
+      },
     },
     palette: {
       mode: mode,

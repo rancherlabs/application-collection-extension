@@ -7,7 +7,6 @@ import { enqueueSnackbar } from 'notistack'
 import { checkDocker } from '../../../../clients/docker'
 import { sortArtifacts } from '../../../../clients/util'
 import BranchCard from './BranchCard'
-import Grid from '@mui/material/Unstable_Grid2'
 
 const ddClient = createDockerDesktopClient()
 
@@ -36,9 +35,7 @@ export default function BranchesList({ branches, packagingFormat }: { branches: 
   }, [])
   
   return (
-    <Grid 
-      container 
-      spacing={ 2 }>
+    <Stack spacing={ 2 }>
       {
         branches
           .filter(branch => branch.versions && branch.versions.length > 0 && branch.versions.find(v => v.artifacts.find(a => a.packaging_format === packagingFormat)))
@@ -59,6 +56,6 @@ export default function BranchesList({ branches, packagingFormat }: { branches: 
             artifact={ artifact } />
           )
       }
-    </Grid>
+    </Stack>
   )
 }
