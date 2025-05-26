@@ -35,7 +35,7 @@ export type HelmListItem = {
   notes?: string
 } 
 
-type HelmHistoryItem = {
+export type HelmHistoryItem = {
   app_version: string,
   description: string,
   updated: string,
@@ -70,7 +70,7 @@ type Description = {
   branch?: string
 }
 
-function mapStatus(status: HelmReleaseStatus): WorkloadStatus {
+export function mapStatus(status: HelmReleaseStatus): WorkloadStatus {
   switch (status) {
     case 'superseded':
     case 'deployed':
@@ -246,7 +246,7 @@ export async function installHelmChart(
             '--version', artifact?.version as string, 
             '--set', 'global.imagePullSecrets[0].name=application-collection',
             ...values.flatMap(v => ['--set', v.key + '=' + v.value ]),
-            '--description', `'${JSON.stringify(description)}'`,
+            '--description', `${JSON.stringify(description)}`,
             '--generate-name',
             '-o', 'json', ], {
             stream: { 

@@ -1,5 +1,5 @@
 import { createDockerDesktopClient } from '@docker/extension-api-client'
-import { Alert, Box, Button, Card, Skeleton, Stack, Tooltip, Typography } from '@mui/material'
+import { Box, Button, Card, Skeleton, Stack, Tooltip, Typography } from '@mui/material'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { findRelease, HelmListItem, HelmReleaseDetails } from '../../clients/helm'
 import { ChangeCircleOutlined, Delete, EditOutlined, HomeOutlined, SyncOutlined, Upgrade } from '@mui/icons-material'
@@ -13,6 +13,7 @@ import { ArtifactListItemReducedDTO, ArtifactListItemReducedDTOPackagingFormatEn
 import { useAuth } from '../../AuthContext'
 import { componentsClient } from '../../clients/backend'
 import { compareVersions } from '../../clients/util'
+import HistoryTimeLine from './HistoryTimeLine'
 
 const ddClient = createDockerDesktopClient()
 
@@ -141,9 +142,10 @@ export default function WorkloadDetailsPage() {
         </Card>
       </Grid>
     </Grid>
+    <HistoryTimeLine history={ release.history } />
     <Box
       sx={ {
-        mt: 3,
+        mt: 2,
         p: 2, 
         background: 'rgba(125, 125, 125, 0.1)',
         overflow: 'auto'
