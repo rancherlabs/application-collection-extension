@@ -39,6 +39,7 @@ type HelmHistoryItem = {
   app_version: string,
   description: string,
   updated: string,
+  status: HelmReleaseStatus
 }
 
 type HelmInstall = {
@@ -106,18 +107,24 @@ export async function findAllHelmCharts(ddClient: DockerDesktopClient): Promise<
   return new Promise((resolve, reject) => {
     ddClient.extension.host?.cli.exec('helm', ['version'])
       .then(() => {
-        ddClient.extension.host?.cli.exec('helm', [ 'list', '-A', '-o', 'json' ])
+        ddClient.extension.host?.cli.exec('helm', [ 'list', '-a', '-A', '-o', 'json' ])
           .then(async (listResult) => {
             const list: HelmListItem[] = JSON.parse(listResult.stdout)
             const releases = await Promise.all(list.map(async (release) => {
+              const status = mapStatus(release.status)
               return await ddClient.extension.host?.cli.exec('helm', [ 'history', '-o', 'json', '-n', release.namespace, release.name ])
                 .then(historyResult => {
                   const history: HelmHistoryItem[] = JSON.parse(historyResult.stdout)
                   if (history.find(line => line.description.includes(KEYWORD))) {
                     return {
                       ...release,
-                      status: mapStatus(release.status),
+                      status,
                       version: release.chart.substring(release.chart.lastIndexOf('-') + 1)
+                    }
+                  } else if (status === WorkloadStatus.Error) {
+                    return {
+                      ...release,
+                      status
                     }
                   }
                 })
@@ -138,7 +145,7 @@ export async function findHelmChart(ddClient: DockerDesktopClient, componentName
   return new Promise((resolve, reject) => {
     ddClient.extension.host?.cli.exec('helm', ['version'])
       .then(() => {
-        ddClient.extension.host?.cli.exec('helm', [ 'list', '-A', '-o', 'json' ])
+        ddClient.extension.host?.cli.exec('helm', [ 'list', '-a', '-A', '-o', 'json' ])
           .then(async (listResult) => {
             const list: HelmListItem[] = JSON.parse(listResult.stdout)
             let result: HelmListItem | undefined
