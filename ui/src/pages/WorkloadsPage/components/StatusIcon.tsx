@@ -16,5 +16,7 @@ export default function StatusIcon({ status }: { status: WorkloadStatus }) {
       return <Tooltip title='Installing'>
         <DownloadingOutlined />
       </Tooltip>
+    default:
+      return <></>
   }
 }
