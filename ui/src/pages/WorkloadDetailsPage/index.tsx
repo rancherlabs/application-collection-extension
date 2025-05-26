@@ -109,7 +109,7 @@ export default function WorkloadDetailsPage() {
       <Button variant='outlined' startIcon={ <EditOutlined /> }>Edit</Button>
     </Stack>
     <Grid container spacing={ 2 } sx={ { mt: 2 } }>
-      <Grid xs={ 4 }>
+      <Grid xs={ 6 }>
         <Card variant='outlined' sx={ { p: 2 } }>
           <Stack direction='row' spacing={ 1 }>
             <Typography color='text.secondary'>Chart name: </Typography>
