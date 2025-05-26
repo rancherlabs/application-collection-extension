@@ -8,6 +8,7 @@ import { AuthProvider } from './AuthContext'
 import { Layout } from './Layout'
 import { useMemo } from 'react'
 import { MaterialDesignContent, SnackbarProvider } from 'notistack'
+import WorkloadDetailsPage, { loader as WorkloadDetailsLoader } from './pages/WorkloadDetailsPage'
 
 const themeOptions = (mode: 'light' | 'dark' = 'light') => {
   return {
@@ -169,7 +170,17 @@ const router = createHashRouter([
       },
       {
         path: 'workloads',
-        element: <WorkloadsPage />
+        children: [
+          {
+            index: true,
+            element: <WorkloadsPage />,
+          },
+          {
+            path: ':name',
+            element: <WorkloadDetailsPage />,
+            loader: WorkloadDetailsLoader
+          },
+        ]
       }
     ]
   },

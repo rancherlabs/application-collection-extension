@@ -136,27 +136,7 @@ export default function WorkloadsPage() {
                 key={ workload.name } 
                 workload={ workload } 
                 updateVersion={ updates ? updates.find(u => u.workload === workload.name)?.updateVersion || null : undefined }
-                updateBranchVersion={ updates ? updates.find(u => u.workload === workload.name)?.updateBranchVersion || null : undefined }
-                onUpdate={ (newRelease) => {
-                  setUpdates(updates?.map(u => {
-                    if (u.workload === newRelease.name) {
-                      u.updateVersion = undefined
-                    }
-
-                    return u
-                  }))
-
-                  setWorkloads(workloads.map(w => {
-                    if (w.name === newRelease.name) {
-                      w = Object.assign(w, newRelease)
-                    }
-
-                    return w
-                  }))
-                } }
-                onUninstall={ () => {
-                  setWorkloads(workloads.filter(w => w.name !== workload.name))
-                } } />) :
+                updateBranchVersion={ updates ? updates.find(u => u.workload === workload.name)?.updateBranchVersion || null : undefined } />) :
               <Typography variant='body2'>
                 { state === 'error' ? 'Error listing workloads.' : <>There is no nothing running yet. Select an application from the <Link to='/'>collection</Link>, and click on the run button to install it.</> }
               </Typography>
