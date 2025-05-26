@@ -13,7 +13,7 @@ export type Workload = HelmListItem & {
 }
 
 export default function WorkloadCard({ workload, updateVersion, updateBranchVersion }: 
-{ workload?: Workload, updateVersion?: ArtifactListItemReducedDTO | null, updateBranchVersion?: ArtifactListItemReducedDTO | null }) {
+{ workload: Workload, updateVersion?: ArtifactListItemReducedDTO | null, updateBranchVersion?: ArtifactListItemReducedDTO | null }) {
   
   function StatusIcon({ status }: { status: WorkloadStatus }) {
     switch (status) {
@@ -31,33 +31,6 @@ export default function WorkloadCard({ workload, updateVersion, updateBranchVers
         </Tooltip>
     }
   }
-  
-  function WorkloadSkeleton() {
-    return (
-      <Card variant='outlined'>
-        <CardContent sx={ { pb: 1 } }>
-          <Stack direction='row' justifyContent='space-between' alignItems='start'>
-            <Skeleton width={ 232 } height={ 20 } />
-            <Stack direction='row' spacing={ 1 }>
-              <Skeleton variant='rectangular' width={ 95 } height={ 24 } />
-              <Skeleton variant='rectangular' width={ 65 } height={ 24 } />
-            </Stack>
-          </Stack>
-          <Skeleton width={ 159 } height={ 18 } sx={ { mt: 1 } }/>
-          <Skeleton width={ 111 } height={ 18 } />
-        </CardContent>
-        <CardActions sx={ { justifyContent: 'space-between', px: 2 } }>
-          <Skeleton variant='rectangular' width={ 68 } height={ 28 } />
-          <Stack direction='row' spacing={ 2 }>
-            <Skeleton variant='rectangular' width={ 126 } height={ 28 } />
-            <Skeleton variant='rectangular' width={ 65 } height={ 28 } />
-          </Stack>
-        </CardActions>
-      </Card>
-    )
-  }
-  
-  if (!workload) return <WorkloadSkeleton />
   
   return (
     <Card
@@ -117,6 +90,44 @@ export default function WorkloadCard({ workload, updateVersion, updateBranchVers
                 </Tooltip>
               ) 
             }
+          </Stack>
+        </CardContent>
+      </CardActionArea>
+    </Card>
+  )
+}
+
+export function LoadingWorkloadCard({}) {
+  return (
+    <Card
+      variant='outlined'
+      sx={ { 
+        maxWidth: 'lg', 
+      } }>
+      <CardActionArea 
+        disabled>
+        <CardContent sx={ { p: 3 } }>
+          <Stack direction='row' justifyContent='space-between' alignItems='start'>
+            <Stack direction='row' alignItems='center'>
+              <Skeleton width={ 210 } height={ 24 }  />
+            </Stack>
+            <Stack direction='row' spacing={ 1 }>
+              <Skeleton variant='circular' width={ 21 } height={ 21 } />
+            </Stack>
+          </Stack>
+          <Stack
+            direction='row'
+            spacing={ 2 }
+            sx={ { mt: 1 } }>
+            <Tooltip title='Namespace'>
+              <Stack 
+                direction='row'
+                spacing={ 0.75 }
+                alignItems='center'>
+                <Skeleton width={ 18 } height={ 18 } />
+                <Skeleton width={ 44 } height={ 20 } />
+              </Stack>
+            </Tooltip>
           </Stack>
         </CardContent>
       </CardActionArea>

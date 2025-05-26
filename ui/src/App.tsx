@@ -46,11 +46,13 @@ const themeOptions = (mode: 'light' | 'dark' = 'light') => {
       },
       h1: {
         fontSize: '2rem',
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        lineHeight: '30px',
       },
       h2: {
         fontSize: '1.5rem',
         fontWeight: '400',
+        lineHeight: '30px',
         '+ h5, + h6': {
           marginTop: '6px'
         }
@@ -58,6 +60,7 @@ const themeOptions = (mode: 'light' | 'dark' = 'light') => {
       h3: {
         fontSize: '1.25rem',
         fontWeight: '400',
+        lineHeight: '24px',
         '+ h5, + h6': {
           marginTop: '6px'
         }
@@ -65,6 +68,7 @@ const themeOptions = (mode: 'light' | 'dark' = 'light') => {
       h4: {
         fontSize: '1.125rem',
         fontWeight: '400',
+        lineHeight: '24px',
         '+ h5, + h6': {
           marginTop: '6px'
         }
@@ -72,6 +76,7 @@ const themeOptions = (mode: 'light' | 'dark' = 'light') => {
       h5: {
         fontSize: '1rem',
         fontWeight: '400',
+        lineHeight: '24px',
         color: mode === 'dark' ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
       },
       h6: {
@@ -80,7 +85,14 @@ const themeOptions = (mode: 'light' | 'dark' = 'light') => {
         color: mode === 'dark' ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
       },
       body1: {
-        fontSize: '0.875rem'
+        fontSize: '0.875rem',
+        lineHeight: '20px'
+      },
+      body2: {
+        lineHeight: '20px'
+      },
+      caption: {
+        lineHeight: '20px'
       }
     },
     palette: {
