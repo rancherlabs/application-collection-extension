@@ -1,5 +1,5 @@
 import { createDockerDesktopClient } from '@docker/extension-api-client'
-import { Box, Button, Card, Skeleton, Stack, Tooltip, Typography } from '@mui/material'
+import { Alert, Box, Button, Card, Skeleton, Stack, Tooltip, Typography } from '@mui/material'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { findRelease, HelmListItem, HelmReleaseDetails } from '../../clients/helm'
 import { ChangeCircleOutlined, Delete, EditOutlined, HomeOutlined, SyncOutlined, Upgrade } from '@mui/icons-material'
@@ -108,6 +108,12 @@ export default function WorkloadDetailsPage() {
       </Stack>
       <Button variant='outlined' startIcon={ <EditOutlined /> }>Edit</Button>
     </Stack>
+    {
+      release.history[release.history.length - 1].status === 'failed' && 
+      <Alert severity='error' sx={ { mt: 3 } } icon={ false }>
+        <Typography>{ release.history[release.history.length - 1].description }</Typography>
+      </Alert>
+    }
     <Grid container spacing={ 2 } sx={ { mt: 2 } }>
       <Grid xs={ 6 }>
         <Card variant='outlined' sx={ { p: 2 } }>
