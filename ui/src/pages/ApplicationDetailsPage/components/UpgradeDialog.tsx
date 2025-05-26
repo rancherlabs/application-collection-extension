@@ -210,7 +210,6 @@ export default function UpgradeDialog({ artifact, workload, isOpen, onSubmit = (
               <Button 
                 color='inherit'
                 onClick={ close }
-                sx={ { mt: 1 } }
                 disabled={ state === 'updating' }>Cancel</Button>
               {
                 state === 'updating' ? 
@@ -218,12 +217,10 @@ export default function UpgradeDialog({ artifact, workload, isOpen, onSubmit = (
                     type='submit'
                     variant='contained'
                     color='inherit'
-                    disabled
-                    sx={ { mt: 1 } }>Updating...</Button> : 
+                    disabled>Updating...</Button> : 
                   <Button 
                     type='submit'
-                    variant='contained'
-                    sx={ { mt: 1 } }>Update</Button>
+                    variant='contained'>Update</Button>
               }
             </Stack>
           </>

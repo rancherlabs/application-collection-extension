@@ -13,6 +13,11 @@ import WorkloadDetailsPage, { loader as WorkloadDetailsLoader } from './pages/Wo
 const themeOptions = (mode: 'light' | 'dark' = 'light') => {
   return {
     components: {
+      MuiButton: {
+        styleOverrides: {
+          root: 'line-height: initial;'
+        }
+      },
       MuiCardActionArea: {
         styleOverrides: {
           focusHighlight: {
