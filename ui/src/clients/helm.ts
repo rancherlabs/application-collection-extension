@@ -183,17 +183,27 @@ export async function findRelease(ddClient: DockerDesktopClient, name: string): 
           return reject('Workload does not exist')
         }
 
-        ddClient.extension.host?.cli.exec('helm', [ 'history', '-o', 'json', '-n', release.namespace, release.name ])
-          .then(historyResult => {
-            const history: HelmHistoryItem[] = JSON.parse(historyResult.stdout)
-            resolve({
-              ...release,
-              status: mapStatus(release.status),
-              version: release.chart.substring(release.chart.lastIndexOf('-') + 1),
-              history
-            })
+        Promise.all([
+          ddClient.extension.host?.cli.exec('helm', [ 'get', 'notes', '-n', release.namespace, release.name ]),
+          ddClient.extension.host?.cli.exec('helm', [ 'history', '-o', 'json', '-n', release.namespace, release.name ]),
+        ])
+          .then(([notes, historyResult]) => {
+            if (historyResult && notes) {
+              const history: HelmHistoryItem[] = JSON.parse(historyResult.stdout)
+              resolve({
+                ...release,
+                status: mapStatus(release.status),
+                version: release.chart.substring(release.chart.lastIndexOf('-') + 1),
+                history,
+                notes: notes.stdout
+              })
+            } else {
+              reject('Couldn\'t read workload history or notes.')
+            }
           })
-          .catch((e) => reject('Couldn\'t read workload history: ' + e))
+          .catch(e => reject('Couldn\'t read workload history or notes: ' + e))
+
+        
       })
       .catch(e => reject('Unexpected error listing helm release: ' + e))
   })

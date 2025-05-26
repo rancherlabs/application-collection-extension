@@ -47,14 +47,14 @@ const themeOptions = (mode: 'light' | 'dark' = 'light') => {
       h1: {
         fontSize: '2rem',
         fontWeight: 'bold',
-        lineHeight: '30px',
+        lineHeight: '28px',
       },
       h2: {
         fontSize: '1.5rem',
         fontWeight: '400',
-        lineHeight: '30px',
+        lineHeight: '26px',
         '+ h5, + h6': {
-          marginTop: '6px'
+          marginTop: '4px'
         }
       },
       h3: {
@@ -62,7 +62,7 @@ const themeOptions = (mode: 'light' | 'dark' = 'light') => {
         fontWeight: '400',
         lineHeight: '24px',
         '+ h5, + h6': {
-          marginTop: '6px'
+          marginTop: '4px'
         }
       },
       h4: {
@@ -70,7 +70,7 @@ const themeOptions = (mode: 'light' | 'dark' = 'light') => {
         fontWeight: '400',
         lineHeight: '24px',
         '+ h5, + h6': {
-          marginTop: '6px'
+          marginTop: '4px'
         }
       },
       h5: {
