@@ -125,7 +125,7 @@ export default function WorkloadCard({ workload, updateVersion, updateBranchVers
       { updateVersion && <UpgradeDialog 
         artifact={ updateVersion }
         workload={ workload }
-        isOpen={ upgradeDialogOpen }
+        open={ upgradeDialogOpen }
         onDismiss={ () => setUpgradeDialogOpen(false) } /> }
       <UninstallDialog 
         name={ workload.name }

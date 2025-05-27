@@ -7,7 +7,6 @@ import WorkloadsPage from './pages/WorkloadsPage'
 import { AuthProvider } from './AuthContext'
 import { Layout } from './Layout'
 import { useMemo } from 'react'
-import { MaterialDesignContent, SnackbarProvider } from 'notistack'
 import NotificationsProvider from './components/NotificationsCenter/NotificationsContext'
 
 const themeOptions = (mode: 'light' | 'dark' = 'light') => {
@@ -144,12 +143,6 @@ declare module '@mui/material/Typography' {
   }
 }
 
-const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
-  '&.notistack-MuiContent': {
-    fontFamily: 'Poppins',
-  },
-}))
-
 const router = createHashRouter([
   {
     path: '/',
@@ -186,13 +179,11 @@ export function App() {
   
   return (
     <ThemeProvider theme={ theme }>
-      <SnackbarProvider maxSnack={ 3 } Components={ { default: StyledMaterialDesignContent } }>
-        <AuthProvider>
-          <NotificationsProvider>
-            <RouterProvider router={ router } />
-          </NotificationsProvider>
-        </AuthProvider>
-      </SnackbarProvider>
+      <AuthProvider>
+        <NotificationsProvider>
+          <RouterProvider router={ router } />
+        </NotificationsProvider>
+      </AuthProvider>
     </ThemeProvider>
   )
 }

@@ -7,9 +7,6 @@ import { findHelmChart, HelmListItem, upgradeHelmChart, WorkloadStatus } from '.
 import { compareVersions, sortArtifacts } from '../../../clients/util'
 import moment from 'moment'
 import InstallDialog from './InstallDialog'
-import { checkKubernetes } from '../../../clients/kubectl'
-import { enqueueSnackbar } from 'notistack'
-import { checkDocker } from '../../../clients/docker'
 import { useNavigate } from 'react-router-dom'
 
 const ddClient = createDockerDesktopClient()
@@ -18,25 +15,6 @@ export default function BranchesTable({ branches, packagingFormat }: { branches:
   if (!packagingFormat) {
     return <Typography>This application cannot be deployed yet</Typography>
   }
-
-  useEffect(() => {
-    switch(packagingFormat) {
-      case 'HELM_CHART':
-        checkKubernetes(ddClient)
-          .catch(e => {
-            console.error(e)
-            enqueueSnackbar('Error with kubernetes, make sure the cluster is up and reachable')
-          })
-        break
-      case 'CONTAINER':
-        checkDocker(ddClient)
-          .catch(e => {
-            console.error(e)
-            enqueueSnackbar('Error with docker engine, make sure it is running')
-          })
-        break
-    }
-  }, [])
 
   return (
     <Table size='small'>
@@ -177,7 +155,7 @@ function BranchRow({ branch, version, artifact }: { branch: { name: string, patt
           branch={ branch.name }
           artifact={ artifact }
           version={ version }
-          isOpen={ installDialogOpen }
+          open={ installDialogOpen }
           onSubmit={ () => {
             setInstallDialogOpen(false)
             navigate('/workloads')
