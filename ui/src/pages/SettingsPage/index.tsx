@@ -1,9 +1,8 @@
-import { CircularProgress, FormControl, InputLabel, MenuItem, Select, Stack, Typography } from '@mui/material'
+import { Alert, CircularProgress, FormControl, InputLabel, MenuItem, Select, Stack, Typography } from '@mui/material'
 import AuthenticationForm from './components/AuthenticationForm'
 import { useEffect, useState } from 'react'
 import { getContexts, useContext } from '../../clients/kubectl'
 import { createDockerDesktopClient } from '@docker/extension-api-client'
-import { useSnackbar } from 'notistack'
 
 const ddClient = createDockerDesktopClient()
 
@@ -21,15 +20,15 @@ export default function SettingsPage() {
 }
 
 function K8sContextForm() {
-  const [ state, setState ] = useState<'loading' | 'ready'>()
+  const [ state, setState ] = useState<'loading' | 'ready' | 'error'>()
   const [ contexts, setContexts ] = useState<{ name: string, selected?: boolean }[]>([])
-  const { enqueueSnackbar } = useSnackbar()
+  const [ error, setError ] = useState<string>()
 
   useEffect(() => {
     setState('loading')
     getContexts(ddClient)
       .then(newContexts => setContexts(newContexts))
-      .catch(error => enqueueSnackbar(error, { autoHideDuration: 5000, key: 'snackbar-k8s-get-contexts' }))
+      .catch(error => setError(error))
       .finally(() => setState('ready'))
   }, [])
 
@@ -37,7 +36,7 @@ function K8sContextForm() {
     setState('loading')
     useContext(ddClient, newContext)
       .then(() => setContexts(contexts.map(ctx => { return { name: ctx.name, selected: ctx.name === newContext } })))
-      .catch(error => enqueueSnackbar(error, { autoHideDuration: 5000, key: 'snackbar-k8s-use-context' }))
+      .catch(error => setError(error))
       .finally(() => setState('ready'))
   }
 
@@ -63,7 +62,16 @@ function K8sContextForm() {
             </MenuItem>) }
         </Select>
       </FormControl>
-      { state === 'loading' && <CircularProgress size={ 21 } /> }
+      { 
+        state === 'loading' && 
+        <CircularProgress size={ 21 } /> 
+      }
+      { 
+        state === 'error' &&
+        <Alert severity='error' icon={ false }>
+          <Typography>{ error }</Typography>
+        </Alert>
+      }
     </Stack>
   )
 }

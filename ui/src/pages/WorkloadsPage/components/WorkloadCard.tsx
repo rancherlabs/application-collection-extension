@@ -14,8 +14,8 @@ export type Workload = HelmListItem & {
   }[],
 }
 
-export default function WorkloadCard({ workload, updateVersion, updateBranchVersion, onUninstall = () => null, onUpdate = () => null }: 
-{ workload?: Workload, updateVersion?: ArtifactListItemReducedDTO | null, updateBranchVersion?: ArtifactListItemReducedDTO | null, onUninstall?: () => any, onUpdate?: (result: HelmListItem) => any }) {
+export default function WorkloadCard({ workload, updateVersion, updateBranchVersion, onUninstall = () => null }: 
+{ workload?: Workload, updateVersion?: ArtifactListItemReducedDTO | null, updateBranchVersion?: ArtifactListItemReducedDTO | null, onUninstall?: () => any }) {
   const [ upgradeDialogOpen, setUpgradeDialogOpen ] = useState<boolean>(false)
   const [ uninstallDialogOpen, setUninstallDialogOpen ] = useState<boolean>(false)
   
@@ -125,13 +125,12 @@ export default function WorkloadCard({ workload, updateVersion, updateBranchVers
       { updateVersion && <UpgradeDialog 
         artifact={ updateVersion }
         workload={ workload }
-        isOpen={ upgradeDialogOpen }
-        onSubmit={ (result) => onUpdate(result) }
+        open={ upgradeDialogOpen }
         onDismiss={ () => setUpgradeDialogOpen(false) } /> }
       <UninstallDialog 
         name={ workload.name }
         namespace={ workload.namespace }
-        isOpen={ uninstallDialogOpen }
+        open={ uninstallDialogOpen }
         onSubmit={ onUninstall }
         onDismiss={ () => setUninstallDialogOpen(false) } />
     </>
