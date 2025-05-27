@@ -1,61 +1,57 @@
-import { createContext, useContext, useReducer } from 'react'
+import { createDockerDesktopClient } from '@docker/extension-api-client'
+import { createContext, useContext, useEffect, useReducer } from 'react'
+import { ServiceError } from '@docker/extension-api-client-types/dist/v1'
 
-type AuthContextPayload = {
-  auth?: string | null,
-  errors?: {
-    dismissed: boolean,
-    message: string
-  }[]
-}
-
-const AuthContext = createContext<AuthContextPayload | undefined>(undefined)
-const AuthDispatchContext = createContext<(action: ReducerAction) => any>(() => undefined)
+type Auth = string | null | undefined
 
 type ReducerAction = {
   type: 'set' | 'update' | 'delete' | 'dismiss_errors',
-  payload?: AuthContextPayload
+  payload?: Auth
 }
 
 const TOKEN_KEY: string = 'token'
 
-function authReducer(state: AuthContextPayload | undefined, action: ReducerAction): AuthContextPayload | undefined {
+function authReducer(auth: Auth, action: ReducerAction): Auth | undefined {
   switch (action.type) {
     case 'set':
     case 'update':
-      if (action.payload?.auth) {
-        localStorage.setItem(TOKEN_KEY, action.payload.auth)
+      if (action.payload) {
+        localStorage.setItem(TOKEN_KEY, action.payload)
       }
 
-      return {
-        auth: action.payload?.auth ? action.payload.auth : state?.auth,
-        errors: action.payload?.errors ? action.payload.errors : state?.errors
-      }
-    case 'dismiss_errors':
-      return {
-        auth: state?.auth,
-        errors: state?.errors?.map(e => {
-          if (action.payload?.errors?.find(dismissed => dismissed.message === e.message)) {
-            return {
-              dismissed: true,
-              message: e.message
-            }
-          }
-
-          return e
-        } )
-      }
+      return action.payload
     case 'delete':
       localStorage.removeItem(TOKEN_KEY)
-      return {
-        auth: null
-      }
+      return null
     default:
       return undefined
   }
 }
 
+const AuthContext = createContext<Auth | undefined>(undefined)
+const AuthDispatchContext = createContext<(action: ReducerAction) => any>(() => undefined)
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [ auth, dispatch ] = useReducer(authReducer, { auth: localStorage.getItem(TOKEN_KEY) || undefined })
+  const ddClient = createDockerDesktopClient()
+  const [ auth, dispatch ] = useReducer(authReducer, localStorage.getItem(TOKEN_KEY) || undefined)
+
+  useEffect(() => {
+    async function getCredentialsFromBackend(currentAttempt: number, maxAttempts: number, intervalWaitMillis: number) {
+      try {
+        const base64Auth = await ddClient.extension.vm?.service?.get('/user/auth') as string
+        const auth = atob(base64Auth)
+
+        dispatch({ type: 'set', payload: auth })
+      } catch (e) {
+        console.error(e)
+        if (currentAttempt < maxAttempts && (!(e as ServiceError).statusCode || (e as ServiceError).statusCode >= 500)) {
+          setTimeout(() => getCredentialsFromBackend(currentAttempt + 1, maxAttempts, intervalWaitMillis), intervalWaitMillis)
+        }
+      }
+    }
+
+    getCredentialsFromBackend(0, 3, 500)
+  }, [])
 
   return (
     <AuthContext.Provider value={ auth }>

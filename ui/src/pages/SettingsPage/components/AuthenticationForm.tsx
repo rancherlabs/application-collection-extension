@@ -4,16 +4,16 @@ import { dockerLogin, dockerLogout } from '../../../clients/docker'
 import { createDockerDesktopClient } from '@docker/extension-api-client'
 import { kubernetesLogin, kubernetesLogout } from '../../../clients/kubectl'
 import { helmLogin, helmLogout } from '../../../clients/helm'
-import { Box, Button, Card, CardContent, CircularProgress, FormControl, IconButton, InputAdornment, InputLabel, List, ListItem, ListItemText, OutlinedInput, Stack, TextField, Tooltip, Typography } from '@mui/material'
-import { Check, Visibility, VisibilityOff, WarningAmberOutlined } from '@mui/icons-material'
+import { Alert, Box, Button, Card, CardContent, CircularProgress, FormControl, IconButton, InputAdornment, InputLabel, List, ListItem, ListItemText, OutlinedInput, Stack, TextField, Typography } from '@mui/material'
+import { Check, Visibility, VisibilityOff } from '@mui/icons-material'
 
 const ddClient = createDockerDesktopClient()
 
 export default function AuthenticationForm() {
   const auth = useAuth()
   const dispatch = useAuthDispatch()
-  const [ username, setUsername ] = useState<string | undefined>(auth?.auth?.split(':')[0])
-  const [ token, setToken ] = useState<string | undefined>(auth?.auth?.split(':')[1])
+  const [ username, setUsername ] = useState<string | undefined>(auth?.split(':')[0])
+  const [ token, setToken ] = useState<string | undefined>(auth?.split(':')[1])
   const [ state, setState ] = useState<'loading' | 'saved' | 'error'>()
   const [ error, setError ] = useState<string>()
   const [ showPassword, setShowPassword ] = useState<boolean>(false)
@@ -22,82 +22,72 @@ export default function AuthenticationForm() {
     if (username && token) {
       const newAuth = `${username}:${token}`
       setState('loading')
-      const errors: string[] = []
+
       dockerLogout(ddClient)
         .catch(e => console.error('Unexpected error running docker logout', e))
-        .finally(() => dockerLogin(ddClient, username, token)
-          .then(() => {
-            kubernetesLogout(ddClient)
-              .catch(e => console.error('Unexpected error deleting kubernetes secret', e))
-              .finally(() => kubernetesLogin(ddClient, username, token)
-                .catch(e => {
-                  console.error('Unexpected error creating kubernetes secret', e)
-                  errors.push('Error creating kubernetes secret, make sure the cluster is up and reachable')
-                })
+        .finally(() => 
+          dockerLogin(ddClient, username, token)
+            .then(() => {
+              kubernetesLogout(ddClient)
+                .catch(e => console.error('Unexpected error deleting kubernetes secret', e))
                 .finally(() => {
-                  helmLogout(ddClient)
-                    .catch(e => console.error('Unexpected error running helm logout', e))
-                    .finally(() => {
-                      helmLogin(ddClient, username, token)
-                        .catch(e => {
-                          console.error('Unexpected error running helm registry login', e)
-                          errors.push('Error running helm registry login, make sure you can reach dp.apps.rancher.io')
-                        })
+                  kubernetesLogin(ddClient, username, token)
+                    .then(() => {
+                      helmLogout(ddClient)
+                        .catch(e => console.error('Unexpected error running helm logout', e))
                         .finally(() => {
-                          new Promise<void>((resolve, reject) => {
-                            const timeout = setTimeout(() => reject(), 10000)
-                            ddClient.extension.vm?.service?.post('/user/logout', {})
-                              .catch(() => console.error('Unexpected error commanding helm logout in backend'))
-                              .finally(() => {
-                                ddClient.extension.vm?.service?.post('/user/login', { username, password: token })
-                                  .catch((e) => {
-                                    console.error('Unexpected error commanding helm login in backend', e)
-                                    errors.push('Internal backend error persisting authentication, make sure the extension backend is running')
-                                  })
+                          helmLogin(ddClient, username, token)
+                            .then(() => {
+                              new Promise<void>((resolve, reject) => {
+                                const timeout = setTimeout(() => reject(), 10000)
+                                ddClient.extension.vm?.service?.post('/user/logout', {})
+                                  .catch(() => console.error('Unexpected error commanding helm logout in backend'))
                                   .finally(() => {
-                                    if (errors.length == 0) {
-                                      dispatch({ 
-                                        type: 'set', 
-                                        payload: {
-                                          auth: newAuth,
-                                          errors: errors.map(e => { return { message: e, dismissed: false } })
-                                        } })
-                                      setState('saved')
-                                      setError(undefined)
-                                    } else {
-                                      dispatch({ 
-                                        type: 'set', 
-                                        payload: {
-                                          errors: errors.map(e => { return { message: e, dismissed: false } })
-                                        } })
-                                      setState('error')
-                                    }
-                                    clearTimeout(timeout)
-                                    resolve()
+                                    ddClient.extension.vm?.service?.post('/user/login', { username, password: token })
+                                      .then(() => {
+                                        dispatch({ 
+                                          type: 'set', 
+                                          payload: newAuth 
+                                        })
+                                        setState('saved')
+                                        setError(undefined)
+                                        clearTimeout(timeout)
+                                        resolve()
+                                      })
+                                      .catch((e) => {
+                                        console.error('Unexpected error persisting authentication in extension backend', e)
+                                        setState('error')
+                                        setError('Cannot persist the authentication in the extension backend. Make sure it is up and running')
+                                      })
                                   })
+                              }).catch(() => {
+                                setError('Timeout connecting to extension backend. Make sure it is up and running.')
+                                setState('error')
                               })
-                          }).catch(() => {
-                            errors.push('Cannot connect to extension backend. Make sure the backend container is running.')
-                            dispatch({ 
-                              type: 'set', 
-                              payload: {
-                                errors: errors.map(e => { return { message: e, dismissed: false } })
-                              } })
-                            setState('error')
-                          })
+                            })
+                            .catch(e => {
+                              console.error('Unexpected error running helm registry login', e)
+                              setState('error')
+                              setError('Error running helm registry login, make sure you can reach dp.apps.rancher.io')
+                            })
                         })
                     })
-                }))
-          })
-          .catch(e => {
-            console.error('Unexpected error running docker login', e)
-            if (e.stderr.includes('401 Unauthorized')) {
-              setError('Invalid authentication pair')
+                    .catch(e => {
+                      console.error('Unexpected error creating kubernetes secret', e)
+                      setState('error')
+                      setError('Error creating kubernetes secret, make sure the cluster is up and reachable')
+                    })
+                })
+            })
+            .catch(e => {
+              console.error('Unexpected error running docker login', e)
+              if (e.stderr.includes('401 Unauthorized')) {
+                setError('Invalid authentication pair')
+              } else {
+                setError('Error running docker login, make sure the daemon is started')
+              }
               setState('error')
-            } else {
-              errors.push('Error running docker login, make sure the daemon is started')
-            }
-          })
+            })
         )
         
     }
@@ -108,11 +98,11 @@ export default function AuthenticationForm() {
       <Stack direction='row' alignItems='top'>
         <TextField 
           label='Username'
-          helperText={ error ? error : 'Example: foo@bar.com' }
+          helperText='Example: foo@bar.com'
           value={ username?.toString() || '' }
           variant='outlined'
           size='small'
-          error={ error !== undefined && error !== '' }
+          error={ state === 'error' }
           onChange={ evt => setUsername(evt.target.value as string) }
           sx={ { mr: 2 } } />
         <FormControl 
@@ -125,7 +115,7 @@ export default function AuthenticationForm() {
             type={ showPassword ? 'text' : 'password' }
             label='Access Token'
             value={ token?.toString() || '' }
-            error={ error !== undefined && error !== '' }
+            error={ state === 'error' }
             onChange={ evt => setToken(evt.target.value as string) }
             endAdornment={
               <InputAdornment position='end'>
@@ -149,13 +139,18 @@ export default function AuthenticationForm() {
           { state === 'loading' ? 'Saving' : 'Save credentials' }
         </Button>
         {
+          state === 'saved' && 
           <Box display='flex' alignItems='start' sx={ { pt: 0.6 } }>
-            { auth?.errors && auth?.errors?.length > 0 ? 
-              <Tooltip title='Current auth may not work as expected'><WarningAmberOutlined color='warning' /></Tooltip> : 
-              state === 'saved' && <Check color='success' /> } 
+            <Check color='success' /> 
           </Box> 
         }
       </Stack>
+      {
+        state === 'error' &&
+        <Alert severity='error' icon={ false } sx={ { mt: 3 } }>
+          <Typography>{ error }</Typography>
+        </Alert>
+      }
       <Card sx={ { mt: 3 } } variant='outlined'>
         <CardContent>
           <Typography>The following will be configured automatically:</Typography>
