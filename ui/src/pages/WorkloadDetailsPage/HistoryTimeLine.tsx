@@ -12,7 +12,6 @@ export default function HistoryTimeLine({ history }: { history: HelmHistoryItem[
       if (json.message) return json.message
     } catch (e) {
       // no-op
-      console.error(e)
     }
 
     return description

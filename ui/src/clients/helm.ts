@@ -121,7 +121,7 @@ export async function findAllHelmCharts(ddClient: DockerDesktopClient): Promise<
                       status,
                       version: release.chart.substring(release.chart.lastIndexOf('-') + 1)
                     }
-                  } else if (status === WorkloadStatus.Error) {
+                  } else if (status === WorkloadStatus.Error || status === WorkloadStatus.Loading) {
                     return {
                       ...release,
                       status
@@ -181,7 +181,7 @@ export async function findHelmChart(ddClient: DockerDesktopClient, componentName
 
 export async function findRelease(ddClient: DockerDesktopClient, name: string): Promise<HelmReleaseDetails> {
   return new Promise<HelmReleaseDetails>((resolve, reject) => {
-    ddClient.extension.host?.cli.exec('helm', [ 'list', '-A', '-o', 'json' ])
+    ddClient.extension.host?.cli.exec('helm', [ 'list', '-a', '-A', '-o', 'json' ])
       .then(async (listResult) => {
         const list: HelmListItem[] = JSON.parse(listResult.stdout)
         const release: HelmListItem | undefined = list.find(release => release.name === name)
