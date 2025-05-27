@@ -130,7 +130,7 @@ export default function WorkloadCard({ workload, updateVersion, updateBranchVers
       <UninstallDialog 
         name={ workload.name }
         namespace={ workload.namespace }
-        isOpen={ uninstallDialogOpen }
+        open={ uninstallDialogOpen }
         onSubmit={ onUninstall }
         onDismiss={ () => setUninstallDialogOpen(false) } />
     </>
