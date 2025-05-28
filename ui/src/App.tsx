@@ -41,45 +41,59 @@ const themeOptions = (mode: 'light' | 'dark' = 'light') => {
       fontFamily: ['Poppins'].join(','),
       code: {
         fontFamily: 'monospace',
-        fontSize: '0.875rem'
+        fontSize: '0.875rem',
+        lineHeight: '18px',
       },
       h1: {
         fontSize: '2rem',
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        lineHeight: '28px',
       },
       h2: {
         fontSize: '1.5rem',
         fontWeight: '400',
+        lineHeight: '26px',
         '+ h5, + h6': {
-          marginTop: '6px'
+          marginTop: '4px'
         }
       },
       h3: {
         fontSize: '1.25rem',
         fontWeight: '400',
+        lineHeight: '24px',
         '+ h5, + h6': {
-          marginTop: '6px'
+          marginTop: '4px'
         }
       },
       h4: {
         fontSize: '1.125rem',
         fontWeight: '400',
+        lineHeight: '20px',
         '+ h5, + h6': {
-          marginTop: '6px'
+          marginTop: '4px'
         }
       },
       h5: {
         fontSize: '1rem',
         fontWeight: '400',
+        lineHeight: '20px',
         color: mode === 'dark' ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
       },
       h6: {
         fontSize: '0.875rem',
         fontWeight: '400',
+        lineHeight: '20px',
         color: mode === 'dark' ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
       },
       body1: {
-        fontSize: '0.875rem'
+        fontSize: '0.875rem',
+        lineHeight: '18px',
+      },
+      body2: {
+        lineHeight: '18px'
+      },
+      caption: {
+        lineHeight: '16px'
       }
     },
     palette: {
