@@ -12,6 +12,11 @@ import { MaterialDesignContent, SnackbarProvider } from 'notistack'
 const themeOptions = (mode: 'light' | 'dark' = 'light') => {
   return {
     components: {
+      MuiButton: {
+        styleOverrides: {
+          root: 'line-height: initial;'
+        }
+      },
       MuiCardActionArea: {
         styleOverrides: {
           focusHighlight: {
@@ -47,36 +52,36 @@ const themeOptions = (mode: 'light' | 'dark' = 'light') => {
       h1: {
         fontSize: '2rem',
         fontWeight: 'bold',
-        lineHeight: '28px',
+        lineHeight: '38px',
       },
       h2: {
         fontSize: '1.5rem',
         fontWeight: '400',
-        lineHeight: '26px',
+        lineHeight: '30px',
         '+ h5, + h6': {
-          marginTop: '4px'
+          marginTop: '6px'
         }
       },
       h3: {
         fontSize: '1.25rem',
         fontWeight: '400',
-        lineHeight: '24px',
+        lineHeight: '26px',
         '+ h5, + h6': {
-          marginTop: '4px'
+          marginTop: '6px'
         }
       },
       h4: {
         fontSize: '1.125rem',
         fontWeight: '400',
-        lineHeight: '20px',
+        lineHeight: '24px',
         '+ h5, + h6': {
-          marginTop: '4px'
+          marginTop: '6px'
         }
       },
       h5: {
         fontSize: '1rem',
         fontWeight: '400',
-        lineHeight: '20px',
+        lineHeight: '22px',
         color: mode === 'dark' ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
       },
       h6: {
@@ -87,13 +92,13 @@ const themeOptions = (mode: 'light' | 'dark' = 'light') => {
       },
       body1: {
         fontSize: '0.875rem',
-        lineHeight: '18px',
+        lineHeight: '20px',
       },
       body2: {
-        lineHeight: '18px'
+        lineHeight: '20px'
       },
       caption: {
-        lineHeight: '16px'
+        lineHeight: '18px'
       }
     },
     palette: {

@@ -38,15 +38,15 @@ export default function ApplicationDetailsPage() {
       <>
         <Stack direction='row' spacing={ 2 } alignItems='center'>
           <Skeleton variant='circular' height={ 60 } width={ 60 } />
-          <Stack direction='column' alignItems='start' spacing={ 1 }>
-            <Skeleton variant='text' height={ 25 } width={ 150 } />
-            <Skeleton variant='rectangular' height={ 24 } width={ 74 } />
+          <Stack direction='column' alignItems='start'>
+            <Skeleton variant='text' height={ 30 } width={ 150 } />
+            <Skeleton variant='rounded' height={ 24 } width={ 74 } />
           </Stack>
         </Stack>
-        <Skeleton variant='text' width='100%' sx={ { mt: 2 } } />
-        <Skeleton variant='text' width='100%' />
-        <Skeleton variant='text' width='50%' sx={ { mb: 2.5 } } />
-        <Typography variant='h3'>Manage versions</Typography>
+        <Skeleton variant='text' height={ 20 } width='100%' sx={ { mt: 2 } } />
+        <Skeleton variant='text' height={ 20 } width='100%' />
+        <Skeleton variant='text' height={ 20 } width='50%' sx={ { mb: 2 } } />
+        <Typography variant='h3'>Manage branches</Typography>
         <Typography variant='h5' sx={ { mb: 3 } }>Install, pause, stop and update workloads</Typography>
         <Skeleton variant='rectangular' height={ 100 } width='100%' />
       </>
@@ -63,7 +63,7 @@ export default function ApplicationDetailsPage() {
     <>
       <Stack direction='row' spacing={ 2 } alignItems='center'>
         { application.logo_url && <img src={ `https://apps.rancher.io${application.logo_url}` } alt={ `${application.name} logo` } height={ 60 } width={ 60 } style={ { height: '100%' } } /> }
-        <Stack direction='column' alignItems='start' spacing={ 1 }>
+        <Stack direction='column' alignItems='start'>
           <Typography variant='h2'>{ application.name }</Typography>
           <Chip label={ humanFriendlyPackagingFormat(application.packaging_format) } size='small' color='primary' />
         </Stack>
