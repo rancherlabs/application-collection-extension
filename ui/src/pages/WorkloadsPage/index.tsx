@@ -34,7 +34,7 @@ export default function WorkloadsPage() {
           }[] = []
 
           try {
-            const chartServices = await getServices(ddClient, [{ key: 'app.kubernetes.io/instance', value: chart.name }])
+            const chartServices = await getServices(ddClient, [{ key: 'app.kubernetes.io/instance', value: chart.name }], chart.namespace)
 
             chartServices
               .filter(s => s.spec && s.spec.type === 'NodePort' && s.spec.ports)
