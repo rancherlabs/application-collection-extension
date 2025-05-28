@@ -83,12 +83,14 @@ const themeOptions = (mode: 'light' | 'dark' = 'light') => {
         fontWeight: '400',
         lineHeight: '22px',
         color: mode === 'dark' ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+        margin: undefined
       },
       h6: {
         fontSize: '0.875rem',
         fontWeight: '400',
         lineHeight: '20px',
         color: mode === 'dark' ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+        margin: undefined
       },
       body1: {
         fontSize: '0.875rem',

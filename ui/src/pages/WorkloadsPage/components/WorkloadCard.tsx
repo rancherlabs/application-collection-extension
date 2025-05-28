@@ -54,7 +54,7 @@ export default function WorkloadCard({ workload, updateVersion, updateBranchVers
         </CardContent>
         <CardActions sx={ { justifyContent: 'space-between', px: 2, pt: 0.5 } }>
           <Stack direction='row' flexGrow={ 1 }>
-            <Skeleton variant='rounded' width={ 126 } height={ 25 } />
+            <Skeleton variant='rounded' width={ 64 } height={ 25 } />
           </Stack>
           <Skeleton variant='rounded' width={ 65 } height={ 25 } />
         </CardActions>
