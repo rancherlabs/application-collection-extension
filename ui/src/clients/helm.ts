@@ -197,7 +197,7 @@ export async function installHelmChart(
             '--version', artifact?.version as string, 
             '--set', 'global.imagePullSecrets[0].name=application-collection',
             ...values.flatMap(v => ['--set', v.key + '=' + v.value ]),
-            '--description', `'${JSON.stringify(description)}'`,
+            '--description', JSON.stringify(description),
             '--generate-name',
             '-o', 'json', ], {
             stream: { 
