@@ -40,23 +40,23 @@ export default function WorkloadCard({ workload, updateVersion, updateBranchVers
   function WorkloadSkeleton() {
     return (
       <Card variant='outlined'>
-        <CardContent sx={ { pb: 1 } }>
+        <CardContent sx={ { pb: 0.5 } }>
           <Stack direction='row' justifyContent='space-between' alignItems='start'>
-            <Skeleton width={ 232 } height={ 20 } />
+            <Skeleton variant='text' width={ 232 } height={ 26 } />
             <Stack direction='row' spacing={ 1 }>
-              <Skeleton variant='rectangular' width={ 95 } height={ 24 } />
-              <Skeleton variant='rectangular' width={ 65 } height={ 24 } />
+              <Skeleton variant='rounded' width={ 95 } height={ 24 } />
+              <Skeleton variant='rounded' width={ 65 } height={ 24 } />
             </Stack>
           </Stack>
-          <Skeleton width={ 159 } height={ 18 } sx={ { mt: 1 } }/>
-          <Skeleton width={ 111 } height={ 18 } />
+          <Skeleton variant='text' width={ 159 } height={ 20 } sx={ { mt: 1 } }/>
+          <Skeleton variant='text' width={ 111 } height={ 20 } />
+          <Skeleton variant='text' width={ 120 } height={ 20 } />
         </CardContent>
-        <CardActions sx={ { justifyContent: 'space-between', px: 2 } }>
-          <Skeleton variant='rectangular' width={ 68 } height={ 28 } />
-          <Stack direction='row' spacing={ 2 }>
-            <Skeleton variant='rectangular' width={ 126 } height={ 28 } />
-            <Skeleton variant='rectangular' width={ 65 } height={ 28 } />
+        <CardActions sx={ { justifyContent: 'space-between', px: 2, pt: 0.5 } }>
+          <Stack direction='row' flexGrow={ 1 }>
+            <Skeleton variant='rounded' width={ 64 } height={ 25 } />
           </Stack>
+          <Skeleton variant='rounded' width={ 65 } height={ 25 } />
         </CardActions>
       </Card>
     )
@@ -103,7 +103,7 @@ export default function WorkloadCard({ workload, updateVersion, updateBranchVers
           <Stack direction='row' flexGrow={ 1 }>
             {
               updateVersion === undefined ? 
-                <Skeleton variant='rectangular' width={ 64 } height={ 28 } /> : 
+                <Skeleton variant='rounded' width={ 64 } height={ 25 } /> : 
                 updateVersion && <Button
                   size='small'
                   color='primary'
