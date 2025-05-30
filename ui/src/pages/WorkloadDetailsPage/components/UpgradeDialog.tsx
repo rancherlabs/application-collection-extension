@@ -14,11 +14,11 @@ export default function UpgradeDialog({ artifact, workload, open, onSubmit = () 
   const [ values, setValues ] = useState<{ key: string, value: string }[]>([])
   const [ currentValue, setCurrentValue ] = useState<{ key?: string, value?: string }>()
   const [ error, setError ] = useState<string>()
-  const [ state, setState ] = useState<'loading-local-values' | 'ready' | 'updating' | 'error'>()
+  const [ state, setState ] = useState<'loading' | 'ready' | 'updating' | 'error'>()
 
   useEffect(() => {
     if (open) {
-      setState('loading-local-values')
+      setState('loading')
       ddClient.extension.vm?.service?.get(`/charts/${artifact.name.split(':')[0]}/${artifact.version}/local-values`)
         .then(result => {
           const localValues: { key: string, value: string }[] = (result as any).values
@@ -77,7 +77,7 @@ export default function UpgradeDialog({ artifact, workload, open, onSubmit = () 
     )
   }
 
-  if (state === 'loading-local-values') {
+  if (state === 'loading') {
     return (
       <Modal
         title={ `Update ${ workload.name } to ${ artifact.version }` }
