@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 import { findHelmChart, HelmListItem, upgradeHelmChart, WorkloadStatus } from '../../../clients/helm'
 import { compareVersions, sortArtifacts } from '../../../clients/util'
 import moment from 'moment'
-import InstallDialog from './InstallDialog'
+import InstallDialog from '../../../components/Helm/InstallDialog'
 import { checkKubernetes } from '../../../clients/kubectl'
 import { enqueueSnackbar } from 'notistack'
 import { checkDocker } from '../../../clients/docker'
@@ -177,14 +177,14 @@ function BranchRow({ branch, version, artifact }: { branch: { name: string, patt
           branch={ branch.name }
           artifact={ artifact }
           version={ version }
-          isOpen={ installDialogOpen }
+          open={ installDialogOpen }
           onSubmit={ (result) => {
             setRunningInstance(result)
             setStatus(result.status)
             setInstallDialogOpen(false)
             navigate('/workloads')
           } }
-          onDismiss={ () => setInstallDialogOpen(false) }/> }
+          onClose={ () => setInstallDialogOpen(false) }/> }
     </>
   )
 }
