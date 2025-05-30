@@ -2,8 +2,8 @@ import { ExpandMore } from '@mui/icons-material'
 import { TimelineItem, TimelineOppositeContent, TimelineSeparator, TimelineConnector, TimelineContent, Timeline } from '@mui/lab'
 import { Accordion, AccordionSummary, Stack, Typography, AccordionDetails } from '@mui/material'
 import moment from 'moment'
-import { HelmHistoryItem, mapStatus } from '../../clients/helm'
-import StatusIcon from '../WorkloadsPage/components/StatusIcon'
+import { HelmHistoryItem, mapStatus } from '../../../clients/helm'
+import StatusIcon from '../../WorkloadsPage/components/StatusIcon'
 
 export default function HistoryTimeLine({ history }: { history: HelmHistoryItem[] }) {
   function parseDescription(description: string): string {
