@@ -71,7 +71,7 @@ export function Layout() {
 
   return (
     <Box component='main' sx={ { display: 'flex', alignItems: 'start', width: '100%', flexGrow: 1, py: 3 } }>
-      <Container maxWidth={ isSmallScreen ? 'md' : 'lg' }>
+      <Container maxWidth={ isSmallScreen ? 'md' : 'lg' } sx={ { overflow: 'hidden' } }>
         <Outlet />
       </Container>
       <Stack direction='column' alignItems='start' width='fit-content'>
