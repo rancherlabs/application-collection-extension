@@ -1,5 +1,5 @@
 import { Button, Stack, TextField } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { uninstallHelmChart } from '../../clients/helm'
 import { createDockerDesktopClient } from '@docker/extension-api-client'
 import { DeleteOutline } from '@mui/icons-material'
@@ -7,25 +7,14 @@ import Modal from '../Modal'
 
 const ddClient = createDockerDesktopClient()
 
-export default function UninstallDialog({ name, namespace, isOpen, onSubmit = () => null, onDismiss = () => null }: 
-{ name: string, namespace?: string, isOpen: boolean, onSubmit?: () => any, onDismiss?: () => any }) {
-  const [ open, setOpen ] = useState<boolean>(isOpen)
+export default function UninstallDialog({ name, namespace, open, onSubmit = () => null, onDismiss = () => null }: 
+{ name: string, namespace?: string, open: boolean, onSubmit?: () => any, onDismiss?: () => any }) {
   const [ submitDisabled, setSubmitDisabled ] = useState<boolean>(true)
   const [ error, setError ] = useState<string>()
-
-  useEffect(() => {
-    if (isOpen) setOpen(isOpen)
-  }, [isOpen])
-
-  function close() {
-    setOpen(false) 
-    onDismiss()
-  }
 
   function uninstall() {
     uninstallHelmChart(ddClient, name, namespace)
       .then(() => {
-        setOpen(false)
         onSubmit()
       })
       .catch(e => setError(e))
@@ -36,7 +25,7 @@ export default function UninstallDialog({ name, namespace, isOpen, onSubmit = ()
       title={ `Uninstall ${ name }?` }
       subtitle='This action CANNOT be undone, the workload will be deleted permanently'
       open={ open }
-      onClose={ close }
+      onClose={ onDismiss }
       onSubmit={ uninstall }>
       <TextField 
         fullWidth 
@@ -49,7 +38,7 @@ export default function UninstallDialog({ name, namespace, isOpen, onSubmit = ()
       <Stack direction='row' justifyContent='space-between' sx={ { mt: 2 } }>
         <Button 
           color='inherit'
-          onClick={ close }>Cancel</Button>
+          onClick={ onDismiss }>Cancel</Button>
         <Button 
           type='submit'
           color='error'

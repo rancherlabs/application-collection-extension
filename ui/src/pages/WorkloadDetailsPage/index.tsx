@@ -69,6 +69,7 @@ export default function WorkloadDetailsPage() {
   }, [release])
 
   function onUpdate(newRelease: HelmListItem) {
+    setUpdate(undefined)
     findRelease(ddClient, release.name)
       .then(details => setRelease(details))
   }
@@ -176,7 +177,7 @@ export default function WorkloadDetailsPage() {
     { update && <UpgradeDialog 
       artifact={ update }
       workload={ release }
-      isOpen={ updateDialogOpen }
+      open={ updateDialogOpen }
       onSubmit={ (result) => {
         onUpdate(result) 
         setUpdateDialogOpen(false)
@@ -193,7 +194,7 @@ export default function WorkloadDetailsPage() {
     <UninstallDialog 
       name={ release.name }
       namespace={ release.namespace }
-      isOpen={ deleteDialogOpen }
+      open={ deleteDialogOpen }
       onSubmit={ () => {
         onDelete()
         setDeleteDialogOpen(false)

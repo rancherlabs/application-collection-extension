@@ -317,7 +317,7 @@ export async function editHelmChart(
             })
             .catch(e => {
               console.error('Unexpected error editing release', e)
-              reject('Unexpected error editing release')
+              reject('Unexpected error editing release: ' + e.stderr)
             })
         }
       })
@@ -362,7 +362,7 @@ export async function upgradeHelmChart(
             })
             .catch(e => {
               console.error('Unexpected error upgrading release', e)
-              reject('Unexpected error upgrading release')
+              reject('Unexpected error upgrading release: ' + e.stderr)
             })
 
         }

@@ -9,40 +9,30 @@ import Modal from '../Modal'
 
 const ddClient = createDockerDesktopClient()
 
-export default function InstallDialog({ branch, artifact, version, isOpen, onSubmit = () => null, onDismiss = () => null }: 
-{ branch: string, artifact: ArtifactListItemReducedDTO | ArtifactDTO, version: string, isOpen: boolean, onSubmit?: (result: HelmListItem) => any, onDismiss?: () => any }) {
-  const [ open, setOpen ] = useState<boolean>(isOpen)
+export default function InstallDialog({ branch, artifact, version, open, onSubmit = () => null, onDismiss = () => null }: 
+{ branch: string, artifact: ArtifactListItemReducedDTO | ArtifactDTO, version: string, open: boolean, onSubmit?: (result: HelmListItem) => any, onDismiss?: () => any }) {
   const [ values, setValues ] = useState<{ key: string, value: string }[]>([])
   const [ currentValue, setCurrentValue ] = useState<{ key?: string, value?: string }>()
   const [ error, setError ] = useState<string>()
   const [ result, setResult ] = useState<HelmListItem>()
-  const [ state, setState ] = useState<'ready' | 'loading-local-values' | 'installing' | 'installation-completed' | 'error'>()
+  const [ state, setState ] = useState<'ready' | 'loading' | 'installing' | 'installation-completed' | 'error'>()
 
   useEffect(() => {
-    if (isOpen) {
-      setOpen(isOpen)
-
-      if (!state) {
-        setState('loading-local-values')
-        ddClient.extension.vm?.service?.get(`/charts/${artifact.name.split(':')[0]}/${artifact.version}/local-values`)
-          .then(result => {
-            const localValues: { key: string, value: string }[] = (result as any).values
-            if (localValues.length > 0) {
-              setValues(localValues)
-            } else {
-              setValues([ { key: 'global.imagePullSecrets[0].name', value: 'application-collection' } ])
-            }
-          })
-          .catch(err => console.error('Unexpected error fetching chart local deployment values', err))
-          .finally(() => setState('ready'))
-      }
+    if (open) {
+      setState('loading')
+      ddClient.extension.vm?.service?.get(`/charts/${artifact.name.split(':')[0]}/${artifact.version}/local-values`)
+        .then(result => {
+          const localValues: { key: string, value: string }[] = (result as any).values
+          if (localValues.length > 0) {
+            setValues(localValues)
+          } else {
+            setValues([ { key: 'global.imagePullSecrets[0].name', value: 'application-collection' } ])
+          }
+        })
+        .catch(err => console.error('Unexpected error fetching chart local deployment values', err))
+        .finally(() => setState('ready'))
     }
-  }, [isOpen])
-
-  function close() {
-    setOpen(false) 
-    onDismiss()
-  }
+  }, [open])
 
   function install() {
     setState('installing')
@@ -63,7 +53,7 @@ export default function InstallDialog({ branch, artifact, version, isOpen, onSub
         title='Error'
         subtitle='There was an unexpected error installing the application'
         open={ open }
-        onClose={ close }>
+        onClose={ onDismiss }>
         <Box sx={ { p: 2, background: 'rgba(125, 125, 125, 0.1)' } }>
           { 
             error.split('\n')
@@ -80,7 +70,7 @@ export default function InstallDialog({ branch, artifact, version, isOpen, onSub
             color='error'
             onClick={ () => {
               setError(undefined)
-              close()
+              onDismiss()
             } }
             sx={ { mt: 1 } }>Cancel installation</Button>
         </Stack>
@@ -88,13 +78,13 @@ export default function InstallDialog({ branch, artifact, version, isOpen, onSub
     )
   }
 
-  if (state === 'loading-local-values') {
+  if (state === 'loading') {
     return (
       <Modal
         title='Configure installation'
         subtitle='Set Helm Chart values manually or through a YAML file'
         open={ open }
-        onClose={ close }>
+        onClose={ onDismiss }>
         <Skeleton height='244px' variant='rectangular' sx={ { mt: 2 } } />
         <Skeleton height='28px' width='300px' variant='rectangular' sx={ { mt: 2 } } />
         <Skeleton height='68px' variant='rectangular'sx={ { mt: 2 } } />
@@ -140,7 +130,7 @@ export default function InstallDialog({ branch, artifact, version, isOpen, onSub
       title='Configure installation'
       subtitle='Set Helm Chart values manually or through a YAML file'
       open={ open }
-      onClose={ close }
+      onClose={ onDismiss }
       onSubmit={ install }>
       { 
         values.map((v, i) => 
@@ -208,7 +198,7 @@ export default function InstallDialog({ branch, artifact, version, isOpen, onSub
       <Stack direction='row' justifyContent='space-between' sx={ { mt: 2 } }>
         <Button 
           color='inherit'
-          onClick={ close }
+          onClick={ onDismiss }
           disabled={ state === 'installing' }>Cancel</Button>
         {
           state === 'installing' ?
