@@ -33,12 +33,12 @@ export default function HistoryTimeLine({ history }: { history: HelmHistoryItem[
         <Timeline sx={ { p: 0, m: 0, mb: 1 } }>
           {
             history.map((entry, i) => <TimelineItem key={ `history-${i}` } sx={ { minHeight: i < history.length - 1 ? '40px' : 'auto' } }>
-              <TimelineOppositeContent sx={ { width: '130px', maxWidth: '130px', px: 2, py: 0 } }>{ moment(entry.updated).calendar() }</TimelineOppositeContent>
+              <TimelineOppositeContent sx={ { width: '125px', maxWidth: '125px', p: 0, pr: 2 } }>{ moment(entry.updated).format('DD/MM/YY HH:mm:ss') }</TimelineOppositeContent>
               <TimelineSeparator>
                 <StatusIcon status={ mapStatus(entry.status) } />
                 { i < history.length - 1 && <TimelineConnector sx={ { my: 0.5 } } /> }
               </TimelineSeparator>
-              <TimelineContent sx={ { px: 2, py: 0 } }>{ parseDescription(entry.description) }</TimelineContent>
+              <TimelineContent  sx={ { p: 0, pl: 2 } }>{ parseDescription(entry.description) }</TimelineContent>
             </TimelineItem>)
           }
         </Timeline>
