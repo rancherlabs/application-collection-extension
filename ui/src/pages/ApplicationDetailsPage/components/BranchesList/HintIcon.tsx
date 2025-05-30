@@ -1,5 +1,5 @@
 import { SvgIconComponent } from '@mui/icons-material'
-import { PopperProps, Tooltip, Stack, SvgIcon, Typography } from '@mui/material'
+import { PopperProps, Tooltip, Stack, SvgIcon, Typography, Skeleton } from '@mui/material'
 
 export default function HintIcon({ tooltip, icon, text }: { tooltip: string, icon: SvgIconComponent, text: string }) {
   const popperProps: Partial<PopperProps> = {
@@ -21,4 +21,8 @@ export default function HintIcon({ tooltip, icon, text }: { tooltip: string, ico
       </Stack>
     </Tooltip>
   )
+}
+
+export function LoadingHintIcon({ width = 70 }: { width?: number }) {
+  return <Skeleton variant='text' height={ 20 } width={ width }/>
 }

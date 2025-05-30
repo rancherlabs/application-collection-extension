@@ -6,7 +6,7 @@ import { Commit, LayersOutlined, SvgIconComponent, SyncOutlined } from '@mui/ico
 import GitBranch from '../../../../components/GitBranch/GitBranch'
 import InstallDialog from '../InstallDialog'
 import { useState } from 'react'
-import HintIcon from './HintIcon'
+import HintIcon, { LoadingHintIcon } from './HintIcon'
 
 export default function BranchCard({ branch, version, artifact }: 
 { branch: { name: string, pattern: string }, version: string, artifact: ArtifactListItemReducedDTO }) {
@@ -56,7 +56,6 @@ export default function BranchCard({ branch, version, artifact }:
 
 export function LoadingBranchCard() {
   return (
-
     <Card variant='outlined' sx={ { maxWidth: 'lg' } }>
       <CardActionArea disabled>
         <CardContent>
@@ -64,10 +63,10 @@ export function LoadingBranchCard() {
             <Stack direction='column' alignItems='start' spacing={ 1 }>
               <Skeleton variant='text' height={ 24 } width={ 97 }/>
               <Stack direction='row' justifyContent='start' alignItems='center' spacing={ 2 }>
-                <Skeleton variant='text' height={ 20 } width={ 39 }/>
-                <Skeleton variant='text' height={ 20 } width={ 73 }/>
-                <Skeleton variant='text' height={ 20 } width={ 107 }/>
-                <Skeleton variant='text' height={ 20 } width={ 74 }/>
+                <LoadingHintIcon width={ 39 }/>
+                <LoadingHintIcon width={ 73 }/>
+                <LoadingHintIcon width={ 107 }/>
+                <LoadingHintIcon width={ 74 }/>
               </Stack>
             </Stack>
           </Stack>
