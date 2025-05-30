@@ -75,7 +75,7 @@ export default function ApplicationDetailsPage() {
       <Typography sx={ { my: 2 } }>{ application.description }</Typography>
       <Typography variant='h3'>Manage branches</Typography>
       <Typography variant='h5' sx={ { mb: 3 } }>Run new workloads in your cluster</Typography>
-      <BranchesList branches={ component.branches } packagingFormat={ application.packaging_format } />
+      <BranchesList branches={ component.branches.filter(b => !b.inactive_at || new Date(b.inactive_at) > new Date()) } packagingFormat={ application.packaging_format } />
     </>
   )
 }

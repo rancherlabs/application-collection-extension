@@ -163,31 +163,17 @@ export default function BranchCard({ branch, version, artifact }:
 export function LoadingBranchCard() {
   return (
 
-    <Card 
-      variant='outlined' 
-      sx={ { 
-        maxWidth: 'lg' 
-      } }>
-      <CardActionArea 
-        disabled>
+    <Card variant='outlined' sx={ { maxWidth: 'lg' } }>
+      <CardActionArea disabled>
         <CardContent>
-          <Stack
-            direction='row'
-            justifyContent='space-between'>
-            <Stack
-              direction='column'
-              alignItems='start'
-              spacing={ 1 }>
-              <Skeleton height={ 20 } width={ 97 }/>
-              <Stack
-                direction='row'
-                justifyContent='start'
-                alignItems='center'
-                spacing={ 2 }>
-                <Skeleton height={ 18 } width={ 39 }/>
-                <Skeleton height={ 18 } width={ 73 }/>
-                <Skeleton height={ 18 } width={ 107 }/>
-                <Skeleton height={ 18 } width={ 74 }/>
+          <Stack direction='row' justifyContent='space-between'>
+            <Stack direction='column' alignItems='start' spacing={ 1 }>
+              <Skeleton variant='text' height={ 24 } width={ 97 }/>
+              <Stack direction='row' justifyContent='start' alignItems='center' spacing={ 2 }>
+                <Skeleton variant='text' height={ 20 } width={ 39 }/>
+                <Skeleton variant='text' height={ 20 } width={ 73 }/>
+                <Skeleton variant='text' height={ 20 } width={ 107 }/>
+                <Skeleton variant='text' height={ 20 } width={ 74 }/>
               </Stack>
             </Stack>
           </Stack>
