@@ -1,9 +1,9 @@
 import { Button, Stack, TextField } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { uninstallHelmChart } from '../../../clients/helm'
+import { uninstallHelmChart } from '../../clients/helm'
 import { createDockerDesktopClient } from '@docker/extension-api-client'
 import { DeleteOutline } from '@mui/icons-material'
-import Modal from '../../../components/Modal'
+import Modal from '../Modal'
 
 const ddClient = createDockerDesktopClient()
 
