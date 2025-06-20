@@ -2,7 +2,7 @@ import { createDockerDesktopClient } from '@docker/extension-api-client'
 import { Alert, Box, Button, Card, Skeleton, Stack, Tooltip, Typography } from '@mui/material'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { findRelease, HelmListItem, HelmReleaseDetails } from '../../clients/helm'
-import { ChangeCircleOutlined, Delete, EditOutlined, HomeOutlined, SyncOutlined, Upgrade } from '@mui/icons-material'
+import { ChangeCircleOutlined, Delete, EditOutlined, HomeOutlined, LanOutlined, SyncOutlined, Upgrade } from '@mui/icons-material'
 import moment from 'moment'
 import StatusIcon from '../WorkloadsPage/components/StatusIcon'
 import Grid from '@mui/material/Unstable_Grid2'
@@ -15,6 +15,14 @@ import { componentsClient } from '../../clients/backend'
 import { compareVersions } from '../../clients/util'
 import EditDialog from './components/EditDialog'
 import HistoryTimeLine from './components/HistoryTimeLine'
+import { getServices } from '../../clients/kubectl'
+import { V1ServicePort, V1ServiceSpec } from '@kubernetes/client-node'
+
+type PortMapping = {
+  targetPort: number;
+  nodePort: number;
+  protocol: string;
+}
 
 const ddClient = createDockerDesktopClient()
 
@@ -24,6 +32,7 @@ export async function loader({ params }: { params: any }): Promise<HelmReleaseDe
 
 export default function WorkloadDetailsPage() {
   const [ release, setRelease ] = useState<HelmReleaseDetails>(useLoaderData() as any)
+  const [ portMappings, setPortMappings ] = useState<PortMapping[]>([])
   const [ update, setUpdate ] = useState<ArtifactListItemReducedDTO | null>()
   const [ editDialogOpen, setEditDialogOpen ] = useState<boolean>(false)
   const [ updateDialogOpen, setUpdateDialogOpen ] = useState<boolean>(false)
@@ -38,6 +47,24 @@ export default function WorkloadDetailsPage() {
       return chunks.filter((chunk, i) => i < chunks.length - 1).join('-')
     }
 
+
+    getServices(ddClient, [{ key: 'app.kubernetes.io/instance', value: release.name }], release.namespace)
+      .then(chartServices => {
+        const mappings: PortMapping[] = chartServices
+          .filter(s => s.spec && s.spec.type === 'NodePort' && s.spec.ports)
+          .flatMap(nodePort => ((nodePort.spec as V1ServiceSpec).ports as V1ServicePort[])
+            .flatMap(port => {
+              return {
+                targetPort: port.targetPort as number,
+                nodePort: port.nodePort as number,
+                protocol: port.protocol as string
+              }
+            })
+          )
+        
+        setPortMappings(mappings)
+      })
+    
     componentsClient(auth?.auth || null).getComponent(appSlugName(release.name))
       .then(response => {
         const component = response.data
@@ -117,37 +144,53 @@ export default function WorkloadDetailsPage() {
         <Typography>{ release.history[release.history.length - 1].description }</Typography>
       </Alert>
     }
-    <Grid container spacing={ 2 } sx={ { mt: 2 } }>
+    <Grid container rowSpacing={ 3 } columnSpacing={ 2 } sx={ { mt: 2 } }>
       <Grid xs={ 6 }>
-        <Card variant='outlined' sx={ { p: 2 } }>
-          <Stack direction='row' spacing={ 1 }>
-            <Typography color='text.secondary'>Chart name: </Typography>
-            <Typography>{ release.chart }</Typography>
-          </Stack>
-          <Stack direction='row' spacing={ 1 }>
-            <Typography color='text.secondary'>Chart version: </Typography>
-            <Typography>{ release.version }</Typography>
-          </Stack>
-          <Stack direction='row' spacing={ 1 }>
-            <Typography color='text.secondary'>App version: </Typography>
-            <Typography>{ release.app_version }</Typography>
-          </Stack>
-        </Card>
+        <Stack direction='row' spacing={ 1 }>
+          <Typography color='text.secondary'>Chart name: </Typography>
+          <Typography>{ release.chart }</Typography>
+        </Stack>
+        <Stack direction='row' spacing={ 1 }>
+          <Typography color='text.secondary'>Chart version: </Typography>
+          <Typography>{ release.version }</Typography>
+        </Stack>
+        <Stack direction='row' spacing={ 1 }>
+          <Typography color='text.secondary'>App version: </Typography>
+          <Typography>{ release.app_version }</Typography>
+        </Stack>
+      </Grid>
+      <Grid xs={ 6 }>
+        <Stack direction='row' spacing={ 1 }>
+          <Typography color='text.secondary'>Last updated: </Typography>
+          <Typography>{ moment(release.history[release.history.length - 1].updated).calendar() }</Typography>
+        </Stack>
+        <Stack direction='row' spacing={ 1 }>
+          <Typography color='text.secondary'>Namespace: </Typography>
+          <Typography>{ release.namespace }</Typography>
+        </Stack>
+        <Stack direction='row' spacing={ 1 }>
+          <Typography color='text.secondary'>Status: </Typography>
+          <Typography>{ release.status }</Typography>
+        </Stack>
       </Grid>
       <Grid xs={ 6 }>
         <Card variant='outlined' sx={ { p: 2 } }>
-          <Stack direction='row' spacing={ 1 }>
-            <Typography color='text.secondary'>Last updated: </Typography>
-            <Typography>{ moment(release.history[release.history.length - 1].updated).calendar() }</Typography>
-          </Stack>
-          <Stack direction='row' spacing={ 1 }>
-            <Typography color='text.secondary'>Namespace: </Typography>
-            <Typography>{ release.namespace }</Typography>
-          </Stack>
-          <Stack direction='row' spacing={ 1 }>
-            <Typography color='text.secondary'>Status: </Typography>
-            <Typography>{ release.status }</Typography>
-          </Stack>
+          <Typography variant='body1' fontWeight='500' sx={ { mb: 1 } }>Port mappings</Typography>
+          { 
+            portMappings.map((portMapping, i) => 
+              <Stack 
+                key={ `portMapping-${i}` }
+                direction='row'
+                spacing={ 0.75 }
+                alignItems='center'>
+                <LanOutlined fontSize='small' />
+                <Typography 
+                  color='text.secondary'>
+                  { portMapping.nodePort } : { portMapping.targetPort.toString().toUpperCase() } ({ portMapping.protocol })
+                </Typography>
+              </Stack>
+            ) 
+          }
         </Card>
       </Grid>
     </Grid>
