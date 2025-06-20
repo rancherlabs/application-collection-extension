@@ -38,8 +38,8 @@ export default function InstallDialog({ branch, artifact, version, open, onSubmi
     setState('installing')
     installHelmChart(ddClient, branch, artifact, version, values)
       .then(result => {
-        setResult(result)
-        setState('installation-completed')
+        setState('ready')
+        onSubmit(result)
       })
       .catch(e => {
         setState('error')
@@ -94,35 +94,6 @@ export default function InstallDialog({ branch, artifact, version, open, onSubmi
         </Stack>
       </Modal>
     )
-  }
-
-  if (state === 'installation-completed' && result) {
-    if (result.notes) {
-      return (
-        <Modal
-          title='Installation completed'
-          subtitle='The application was successfully deployed'
-          open={ open }
-          onClose={ () => onSubmit(result) }>
-          <Typography variant='body1' sx={ { my: 2 } }>These are the application <Typography variant='code'>NOTES.txt</Typography>, read them carefully before closing this modal.</Typography>
-          <Box sx={ { p: 2, background: 'rgba(125, 125, 125, 0.1)' } }>
-            { 
-              result.notes.split('\n')
-                .filter(line => line)
-                .map((line, i) => <Typography key={ `notes-line-${i}` } variant='code' component='p'>{ line }</Typography>) 
-            }
-          </Box>
-          <Stack direction='row' justifyContent='end' sx={ { mt: 2 } }>
-            <Button 
-              color='inherit'
-              onClick={ () => onSubmit(result) }
-              sx={ { mt: 1 } }>Close</Button>
-          </Stack>
-        </Modal>
-      )
-    } else {
-      onSubmit(result)
-    }
   }
 
   return (

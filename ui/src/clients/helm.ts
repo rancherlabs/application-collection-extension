@@ -35,9 +35,11 @@ export type HelmListItem = {
   notes?: string
 } 
 
-type HelmHistoryItem = {
+export type HelmHistoryItem = {
   app_version: string,
-  description: string
+  description: string,
+  updated: string,
+  status: HelmReleaseStatus
 }
 
 type HelmInstall = {
@@ -54,17 +56,21 @@ type HelmInstall = {
   }
 }
 
+export type HelmReleaseDetails = HelmListItem & {
+  history: HelmHistoryItem[]
+}
+
 const MATCHER = 'source=application-collection-extension'
 
 type Description = {
   message: string
   version: string,
-  revision: string,
-  digest: string
+  revision?: string,
+  digest?: string
   branch?: string
 }
 
-function mapStatus(status: HelmReleaseStatus): WorkloadStatus {
+export function mapStatus(status: HelmReleaseStatus): WorkloadStatus {
   switch (status) {
     case 'superseded':
     case 'deployed':
@@ -157,6 +163,43 @@ export async function findHelmChart(ddClient: DockerDesktopClient, componentName
   })
 }
 
+export async function findRelease(ddClient: DockerDesktopClient, name: string): Promise<HelmReleaseDetails> {
+  return new Promise<HelmReleaseDetails>((resolve, reject) => {
+    ddClient.extension.host?.cli.exec('helm', [ 'list', '-a', '-A', '-o', 'json' ])
+      .then(async (listResult) => {
+        const list: HelmListItem[] = JSON.parse(listResult.stdout)
+        const release: HelmListItem | undefined = list.find(release => release.name === name)
+
+        if (!release) {
+          return reject('Workload does not exist')
+        }
+
+        Promise.all([
+          ddClient.extension.host?.cli.exec('helm', [ 'get', 'notes', '-n', release.namespace, release.name ]),
+          ddClient.extension.host?.cli.exec('helm', [ 'history', '-o', 'json', '-n', release.namespace, release.name ]),
+        ])
+          .then(([notes, historyResult]) => {
+            if (historyResult && notes) {
+              const history: HelmHistoryItem[] = JSON.parse(historyResult.stdout)
+              resolve({
+                ...release,
+                status: mapStatus(release.status),
+                version: release.chart.substring(release.chart.lastIndexOf('-') + 1),
+                history,
+                notes: notes.stdout
+              })
+            } else {
+              reject('Couldn\'t read workload history or notes.')
+            }
+          })
+          .catch(e => reject('Couldn\'t read workload history or notes: ' + e))
+
+        
+      })
+      .catch(e => reject('Unexpected error listing helm release: ' + e))
+  })
+}
+
 export async function installHelmChart(
   ddClient: DockerDesktopClient, 
   branchName: string, 
@@ -225,6 +268,46 @@ export async function installHelmChart(
       })
   })
 }
+export async function editHelmChart(
+  ddClient: DockerDesktopClient, 
+  release: HelmListItem,
+  values: { key: string, value:string }[] = [{ key: 'global.imagePullSecrets[0].name', value: 'application-collection' }]
+): Promise<HelmListItem> {
+  return new Promise((resolve, reject) => {
+    findKubernetesSecret(ddClient)
+      .then((isSecretStored) => {
+        if (!isSecretStored) {
+          reject('Secret application-collection does not exist. Please refresh the authentication settings.')
+        } else {
+          const description: Description = {
+            message: `Edit version ${release.version} values`,
+            version: release.version
+          }
+          ddClient.extension.host?.cli.exec('helm', [ 
+            'upgrade', release.name, `oci://dp.apps.rancher.io/charts/${release.chart.split('-').slice(0, -1).join('-')}`, 
+            '-n', release.namespace,
+            ...values.flatMap(v => ['--set', v.key + '=' + v.value ]),
+            '--description', `'${JSON.stringify(description)}'`,
+            '-o', 'json' ], { })
+            .then(upgradeResult => {
+              const upgrade: HelmInstall = JSON.parse(upgradeResult.stdout)
+              resolve({
+                name: upgrade.name,
+                namespace: upgrade.namespace,
+                status: mapStatus(upgrade.info.status),
+                app_version: upgrade.chart.metadata.appVersion,
+                chart: release.chart,
+                version: release.version
+              })
+            })
+            .catch(e => {
+              console.error('Unexpected error editing release', e)
+              reject('Unexpected error editing release: ' + e.stderr)
+            })
+        }
+      })
+  })
+}
 
 export async function upgradeHelmChart(
   ddClient: DockerDesktopClient, 
@@ -264,7 +347,7 @@ export async function upgradeHelmChart(
             })
             .catch(e => {
               console.error('Unexpected error upgrading release', e)
-              reject('Unexpected error upgrading release')
+              reject('Unexpected error upgrading release: ' + e.stderr)
             })
 
         }
