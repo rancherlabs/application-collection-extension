@@ -42,7 +42,7 @@ export function Layout() {
             {
               notifications.find(n => !n.dismissed) ?
                 <Badge 
-                  color='secondary'
+                  color={ notifications.filter(n => !n.dismissed).find(n => n.type === 'error') ? 'error' : 'primary' }
                   variant='dot'
                   sx={ { mr: 2 } } >
                   <NotificationsNone />
