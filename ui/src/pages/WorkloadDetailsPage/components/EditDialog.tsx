@@ -132,7 +132,7 @@ export default function EditDialog({ workload, open, onSubmit = () => null, onDi
       <Stack direction='row' justifyContent='space-between' sx={ { mt: 2 } }>
         <Button 
           color='inherit'
-          onClick={ close }
+          onClick={ onDismiss }
           disabled={ state === 'updating' }>Cancel</Button>
         {
           state === 'updating' ? 
