@@ -1,4 +1,4 @@
-import { Stack, Typography } from '@mui/material'
+import { Button, CircularProgress, Stack, Typography } from '@mui/material'
 import { findAllHelmCharts } from '../../clients/helm'
 import { ReactElement, useEffect, useState } from 'react'
 import { createDockerDesktopClient } from '@docker/extension-api-client'
@@ -15,56 +15,55 @@ import { Link } from 'react-router-dom'
 const ddClient = createDockerDesktopClient()
 
 export default function WorkloadsPage() {
-  const [ state, setState ] = useState<'loading' | 'ready' | 'error'>('loading')
+  const [ state, setState ] = useState<'loading' | 'ready' | 'error' | 'updating'>('loading')
   const [ workloads, setWorkloads ] = useState<Workload[]>([])
   const [ updates, setUpdates ] = useState<{ workload: string, updateVersion?: ArtifactListItemReducedDTO, updateBranchVersion?: ArtifactListItemReducedDTO }[]>()
   const [ error, setError ] = useState<ReactElement>()
 
   const auth = useAuth()
+  async function fetchData() {
+    try {
+      const charts = await findAllHelmCharts(ddClient)
+      const workloads = await Promise.all<Promise<Workload>[]>(charts.map(async (chart) => {
+
+        const chartPortMappings: {
+          targetPort: number,
+          nodePort: number,
+          protocol: string
+        }[] = []
+
+        try {
+          const chartServices = await getServices(ddClient, [{ key: 'app.kubernetes.io/instance', value: chart.name }], chart.namespace)
+
+          chartServices
+            .filter(s => s.spec && s.spec.type === 'NodePort' && s.spec.ports)
+            .forEach(nodePort => ((nodePort.spec as V1ServiceSpec).ports as V1ServicePort[])
+              .forEach(port => {
+                chartPortMappings.push({
+                  targetPort: port.targetPort as number,
+                  nodePort: port.nodePort as number,
+                  protocol: port.protocol as string
+                })
+              })
+            )
+        } catch (e) {
+          console.error(`Unexpected error getting helm chart services [name=${chart.name}]`, e)
+        }
+        return { 
+          ...chart, 
+          portMappings: chartPortMappings
+        }
+      }))
+
+      setWorkloads(workloads)
+      setState('ready')
+    } catch (e) {
+      setError(<>There was an unexpected error listing the helm releases: { e }</>)
+      setState('error')
+    }
+  }
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const charts = await findAllHelmCharts(ddClient)
-        const workloads = await Promise.all<Promise<Workload>[]>(charts.map(async (chart) => {
-
-          const chartPortMappings: {
-            targetPort: number,
-            nodePort: number,
-            protocol: string
-          }[] = []
-
-          try {
-            const chartServices = await getServices(ddClient, [{ key: 'app.kubernetes.io/instance', value: chart.name }], chart.namespace)
-
-            chartServices
-              .filter(s => s.spec && s.spec.type === 'NodePort' && s.spec.ports)
-              .forEach(nodePort => ((nodePort.spec as V1ServiceSpec).ports as V1ServicePort[])
-                .forEach(port => {
-                  chartPortMappings.push({
-                    targetPort: port.targetPort as number,
-                    nodePort: port.nodePort as number,
-                    protocol: port.protocol as string
-                  })
-                })
-              )
-          } catch (e) {
-            console.error(`Unexpected error getting helm chart services [name=${chart.name}]`, e)
-          }
-          return { 
-            ...chart, 
-            portMappings: chartPortMappings
-          }
-        }))
-
-        setWorkloads(workloads)
-        setState('ready')
-      } catch (e) {
-        setError(<>There was an unexpected error listing the helm releases: { e }</>)
-        setState('error')
-      }
-    }
-  
     checkDocker(ddClient)
       .then(() => checkKubernetes(ddClient)
         .then(() => fetchData())
@@ -137,7 +136,7 @@ export default function WorkloadsPage() {
           </>
         }
         { 
-          state === 'ready' && workloads.length > 0 && 
+          (state === 'ready' || state === 'updating') && workloads.length > 0 && 
           workloads.map(workload => <WorkloadCard 
             key={ workload.name } 
             workload={ workload } 
@@ -145,13 +144,23 @@ export default function WorkloadsPage() {
             updateBranchVersion={ updates ? updates.find(u => u.workload === workload.name)?.updateBranchVersion || null : undefined } />) 
         }
         {
-          state === 'ready' && workloads.length === 0 &&
+          (state === 'ready' || state === 'updating') && workloads.length === 0 &&
           <Typography variant='body2'>There is no nothing running yet. Select an application from the <Link to='/'>collection</Link>, and click on the run button to install it.</Typography>
         }
         { 
           state === 'error' && 
           <Typography variant='body2'>Error listing workloads.</Typography>
         }
+        <Button 
+          sx={ { alignSelf: 'center', width: 'fit-content' } } 
+          startIcon={ state === 'updating' && <CircularProgress size={ 16 } color='inherit' /> }
+          disabled={ state === 'updating' || state === 'loading' }
+          onClick={ () => {
+            setState('updating')
+            fetchData()
+          } }>
+          Click to reload
+        </Button>
       </Stack>
     </>
   )
