@@ -45,10 +45,10 @@ export async function findKubernetesSecret(ddClient: DockerDesktopClient): Promi
   })
 }
 
-export async function getServices(ddClient: DockerDesktopClient, selectors: { key: string, value: string }[]): Promise<V1Service[]> {
+export async function getServices(ddClient: DockerDesktopClient, selectors: { key: string, value: string }[], namespace: string = 'default'): Promise<V1Service[]> {
   return new Promise<V1Service[]>((resolve, reject) => {
     ddClient.extension.host?.cli.exec('kubectl', [
-      'get', 'services', ...selectors.flatMap(({ key, value }) => ['-l', `${key}=${value}`]),
+      'get', '-n', namespace, 'services', ...selectors.flatMap(({ key, value }) => ['-l', `${key}=${value}`]),
       '-o', 'json'])
       .then(getResult => {
         const get: any = JSON.parse(getResult?.stdout)

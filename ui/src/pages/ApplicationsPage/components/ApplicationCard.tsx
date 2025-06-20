@@ -57,16 +57,16 @@ export function ApplicationCardSkeleton() {
         <CardContent sx={ { p: 3 } }>
           <Stack direction={ { xs: 'column', sm: 'row' } } alignItems={ { xs: 'start', sm: 'center' } } flexWrap='wrap' rowGap={ 2 } >
             <Stack direction='row' spacing={ 2 } flexGrow='1' alignItems='center' sx={ { mr: 2 } }>
-              <Skeleton variant='rectangular' height={ 46 } width={ 46 } /> 
+              <Skeleton variant='circular' height={ 46 } width={ 46 } /> 
               <Stack direction='column'>
-                <Skeleton variant='text' width={ 130 } height={ 21 } />
+                <Skeleton variant='text' width={ 130 } height={ 26 } />
                 <Skeleton variant='text' width={ 130 } height={ 18 } />
               </Stack>
             </Stack>
-            <Skeleton variant='rectangular' height={ 24 } width={ 73 } /> 
+            <Skeleton variant='rounded' height={ 24 } width={ 73 } /> 
           </Stack>
-          <Skeleton width='100%' sx={ { mt: 2 } } />
-          <Skeleton width='75%' />
+          <Skeleton height={ 20 } width='100%' sx={ { mt: 2 } } />
+          <Skeleton height={ 20 } width='75%' />
         </CardContent>
       </CardActionArea>
     </Card>

@@ -4,8 +4,9 @@ import { ApplicationDTO, ApplicationDTOPackagingFormatEnum, ComponentDTO } from 
 import { ReactElement, useEffect, useState } from 'react'
 import { applicationsClient, componentsClient } from '../../clients/backend'
 import { Link, useLoaderData } from 'react-router-dom'
-import BranchesTable from './components/BranchesTable'
 import { AxiosError } from 'axios'
+import BranchesList from './components/BranchesList'
+import { LoadingBranchCard } from './components/BranchesList/BranchCard'
 
 export async function loader({ params }: { params: any }): Promise<string> {
   return params.slugName
@@ -63,17 +64,20 @@ export default function ApplicationDetailsPage() {
       <>
         <Stack direction='row' spacing={ 2 } alignItems='center'>
           <Skeleton variant='circular' height={ 60 } width={ 60 } />
-          <Stack direction='column' alignItems='start' spacing={ 1 }>
-            <Skeleton variant='text' height={ 25 } width={ 150 } />
-            <Skeleton variant='rectangular' height={ 24 } width={ 74 } />
+          <Stack direction='column' alignItems='start'>
+            <Skeleton variant='text' height={ 30 } width={ 150 } />
+            <Skeleton variant='rounded' height={ 24 } width={ 74 } />
           </Stack>
         </Stack>
-        <Skeleton variant='text' width='100%' sx={ { mt: 2 } } />
-        <Skeleton variant='text' width='100%' />
-        <Skeleton variant='text' width='50%' sx={ { mb: 2.5 } } />
-        <Typography variant='h3'>Manage versions</Typography>
-        <Typography variant='h5' sx={ { mb: 3 } }>Install, pause, stop and update workloads</Typography>
-        <Skeleton variant='rectangular' height={ 100 } width='100%' />
+        <Skeleton variant='text' height={ 20 } width='100%' sx={ { mt: 2 } } />
+        <Skeleton variant='text' height={ 20 } width='100%' />
+        <Skeleton variant='text' height={ 20 } width='50%' sx={ { mb: 2 } } />
+        <Typography variant='h3'>Manage branches</Typography>
+        <Typography variant='h5' sx={ { mb: 3 } }>Run new workloads in your cluster</Typography>
+        <Stack spacing={ 2 }>
+          <LoadingBranchCard />
+          <LoadingBranchCard />
+        </Stack>
       </>
     )
   }
@@ -88,15 +92,15 @@ export default function ApplicationDetailsPage() {
     <>
       <Stack direction='row' spacing={ 2 } alignItems='center'>
         { application.logo_url && <img src={ `https://apps.rancher.io${application.logo_url}` } alt={ `${application.name} logo` } height={ 60 } width={ 60 } style={ { height: '100%' } } /> }
-        <Stack direction='column' alignItems='start' spacing={ 1 }>
+        <Stack direction='column' alignItems='start'>
           <Typography variant='h2'>{ application.name }</Typography>
           <Chip label={ humanFriendlyPackagingFormat(application.packaging_format) } size='small' color='primary' />
         </Stack>
       </Stack>
       <Typography sx={ { my: 2 } }>{ application.description }</Typography>
       <Typography variant='h3'>Manage branches</Typography>
-      <Typography variant='h5' sx={ { mb: 3 } }>Install, pause, stop and update workloads</Typography>
-      <BranchesTable branches={ component.branches } packagingFormat={ application.packaging_format } />
+      <Typography variant='h5' sx={ { mb: 3 } }>Run new workloads in your cluster</Typography>
+      <BranchesList branches={ component.branches.filter(b => !b.inactive_at || new Date(b.inactive_at) > new Date()) } packagingFormat={ application.packaging_format } />
     </>
   )
 }

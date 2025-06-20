@@ -2,8 +2,7 @@ import { Stack, Typography } from '@mui/material'
 import { findAllHelmCharts } from '../../clients/helm'
 import { ReactElement, useEffect, useState } from 'react'
 import { createDockerDesktopClient } from '@docker/extension-api-client'
-import { Link } from 'react-router-dom'
-import WorkloadCard, { Workload } from './components/WorkloadCard'
+import WorkloadCard, { LoadingWorkloadCard, Workload } from './components/WorkloadCard'
 import { checkKubernetes, getServices } from '../../clients/kubectl'
 import { V1ServicePort, V1ServiceSpec } from '@kubernetes/client-node'
 import { useAuth } from '../../AuthContext'
@@ -35,7 +34,7 @@ export default function WorkloadsPage() {
           }[] = []
 
           try {
-            const chartServices = await getServices(ddClient, [{ key: 'app.kubernetes.io/instance', value: chart.name }])
+            const chartServices = await getServices(ddClient, [{ key: 'app.kubernetes.io/instance', value: chart.name }], chart.namespace)
 
             chartServices
               .filter(s => s.spec && s.spec.type === 'NodePort' && s.spec.ports)
@@ -130,7 +129,11 @@ export default function WorkloadsPage() {
       <Stack direction='column' spacing={ 2 } sx={ { mt: 2 } }>
         { 
           state === 'loading' && 
-          <WorkloadCard /> 
+          <>
+            <LoadingWorkloadCard />
+            <LoadingWorkloadCard />
+            <LoadingWorkloadCard />
+          </>
         }
         { 
           state === 'ready' && workloads.length > 0 && 
@@ -138,18 +141,15 @@ export default function WorkloadsPage() {
             key={ workload.name } 
             workload={ workload } 
             updateVersion={ updates ? updates.find(u => u.workload === workload.name)?.updateVersion || null : undefined }
-            updateBranchVersion={ updates ? updates.find(u => u.workload === workload.name)?.updateBranchVersion || null : undefined }
-            onUninstall={ () => {
-              setWorkloads(workloads.filter(w => w.name !== workload.name))
-            } } />) 
+            updateBranchVersion={ updates ? updates.find(u => u.workload === workload.name)?.updateBranchVersion || null : undefined } />) 
         }
         {
           state === 'ready' && workloads.length === 0 &&
           <Typography variant='body2'>There is no nothing running yet. Select an application from the <Link to='/'>collection</Link>, and click on the run button to install it.</Typography>
         }
-        {
+        { 
           state === 'error' && 
-          <Typography color='error' sx={ { mt: 2 } }>{ error }</Typography> 
+          <Typography variant='body2'>Error listing workloads.</Typography>
         }
       </Stack>
     </>

@@ -1,4 +1,4 @@
-import { createTheme, styled, ThemeProvider, useMediaQuery } from '@mui/material'
+import { createTheme, ThemeProvider, useMediaQuery } from '@mui/material'
 import { createHashRouter, RouterProvider } from 'react-router-dom'
 import ApplicationsPage from './pages/ApplicationsPage'
 import ApplicationDetailsPage, { loader as ApplicationDetailsLoader } from './pages/ApplicationDetailsPage'
@@ -8,10 +8,16 @@ import { AuthProvider } from './AuthContext'
 import { Layout } from './Layout'
 import { useMemo } from 'react'
 import NotificationsProvider from './components/NotificationsCenter/NotificationsContext'
+import WorkloadDetailsPage, { loader as WorkloadDetailsLoader } from './pages/WorkloadDetailsPage'
 
 const themeOptions = (mode: 'light' | 'dark' = 'light') => {
   return {
     components: {
+      MuiButton: {
+        styleOverrides: {
+          root: 'line-height: initial;'
+        }
+      },
       MuiCardActionArea: {
         styleOverrides: {
           focusHighlight: {
@@ -41,15 +47,18 @@ const themeOptions = (mode: 'light' | 'dark' = 'light') => {
       fontFamily: ['Poppins'].join(','),
       code: {
         fontFamily: 'monospace',
-        fontSize: '0.875rem'
+        fontSize: '0.875rem',
+        lineHeight: '18px',
       },
       h1: {
         fontSize: '2rem',
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        lineHeight: '38px',
       },
       h2: {
         fontSize: '1.5rem',
         fontWeight: '400',
+        lineHeight: '30px',
         '+ h5, + h6': {
           marginTop: '6px'
         }
@@ -57,6 +66,7 @@ const themeOptions = (mode: 'light' | 'dark' = 'light') => {
       h3: {
         fontSize: '1.25rem',
         fontWeight: '400',
+        lineHeight: '26px',
         '+ h5, + h6': {
           marginTop: '6px'
         }
@@ -64,6 +74,7 @@ const themeOptions = (mode: 'light' | 'dark' = 'light') => {
       h4: {
         fontSize: '1.125rem',
         fontWeight: '400',
+        lineHeight: '24px',
         '+ h5, + h6': {
           marginTop: '6px'
         }
@@ -71,15 +82,26 @@ const themeOptions = (mode: 'light' | 'dark' = 'light') => {
       h5: {
         fontSize: '1rem',
         fontWeight: '400',
+        lineHeight: '22px',
         color: mode === 'dark' ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+        margin: undefined
       },
       h6: {
         fontSize: '0.875rem',
         fontWeight: '400',
+        lineHeight: '20px',
         color: mode === 'dark' ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+        margin: undefined
       },
       body1: {
-        fontSize: '0.875rem'
+        fontSize: '0.875rem',
+        lineHeight: '20px',
+      },
+      body2: {
+        lineHeight: '20px'
+      },
+      caption: {
+        lineHeight: '18px'
       }
     },
     palette: {
@@ -163,7 +185,17 @@ const router = createHashRouter([
       },
       {
         path: 'workloads',
-        element: <WorkloadsPage />
+        children: [
+          {
+            index: true,
+            element: <WorkloadsPage />,
+          },
+          {
+            path: ':name',
+            element: <WorkloadDetailsPage />,
+            loader: WorkloadDetailsLoader
+          },
+        ]
       }
     ]
   },
