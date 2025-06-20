@@ -2,7 +2,7 @@ import { CancelOutlined, CheckCircleOutline, ErrorOutline, InfoOutlined } from '
 import { Box, CircularProgress, SvgIconProps } from '@mui/material'
 
 export default function StatusIcon({ status }: { status: 'info' | 'progress' | 'success' | 'warning' | 'error' }) {
-  const props: SvgIconProps = { sx: { fontSize: '20px', mr: 2 } }
+  const props: SvgIconProps = { sx: { fontSize: '20px', mr: 2, mt: 0.3 } }
 
   switch (status) {
     case 'success':

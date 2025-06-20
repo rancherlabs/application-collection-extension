@@ -44,7 +44,8 @@ export default function NotificationItem({ notification, onClose }: { notificati
             <Stack>
               <Typography 
                 variant='h5' 
-                color='text.primary'>
+                color='text.primary'
+                sx={ { my: 0 } }>
                 { notification.title }
               </Typography>
               <Typography 
