@@ -65,7 +65,7 @@ export default function WorkloadDetailsPage() {
         setPortMappings(mappings)
       })
     
-    componentsClient(auth?.auth || null).getComponent(appSlugName(release.name))
+    componentsClient(auth || null).getComponent(appSlugName(release.name))
       .then(response => {
         const component = response.data
 
