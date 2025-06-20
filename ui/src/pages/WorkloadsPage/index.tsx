@@ -2,8 +2,7 @@ import { Stack, Typography } from '@mui/material'
 import { findAllHelmCharts } from '../../clients/helm'
 import { useEffect, useState } from 'react'
 import { createDockerDesktopClient } from '@docker/extension-api-client'
-import { Link } from 'react-router-dom'
-import WorkloadCard, { Workload } from './components/WorkloadCard'
+import WorkloadCard, { LoadingWorkloadCard, Workload } from './components/WorkloadCard'
 import { checkKubernetes, getServices } from '../../clients/kubectl'
 import { V1ServicePort, V1ServiceSpec } from '@kubernetes/client-node'
 import { useAuth } from '../../AuthContext'
@@ -130,35 +129,19 @@ export default function WorkloadsPage() {
       <Stack direction='column' spacing={ 2 } sx={ { mt: 2 } }>
         {
           state === 'loading' ?
-            <WorkloadCard /> :
+            <>
+              <LoadingWorkloadCard />
+              <LoadingWorkloadCard />
+              <LoadingWorkloadCard />
+            </> :
             workloads.length > 0 ? 
               workloads.map(workload => <WorkloadCard 
                 key={ workload.name } 
                 workload={ workload } 
                 updateVersion={ updates ? updates.find(u => u.workload === workload.name)?.updateVersion || null : undefined }
-                updateBranchVersion={ updates ? updates.find(u => u.workload === workload.name)?.updateBranchVersion || null : undefined }
-                onUpdate={ (newRelease) => {
-                  setUpdates(updates?.map(u => {
-                    if (u.workload === newRelease.name) {
-                      u.updateVersion = undefined
-                    }
-
-                    return u
-                  }))
-
-                  setWorkloads(workloads.map(w => {
-                    if (w.name === newRelease.name) {
-                      w = Object.assign(w, newRelease)
-                    }
-
-                    return w
-                  }))
-                } }
-                onUninstall={ () => {
-                  setWorkloads(workloads.filter(w => w.name !== workload.name))
-                } } />) :
+                updateBranchVersion={ updates ? updates.find(u => u.workload === workload.name)?.updateBranchVersion || null : undefined } />) :
               <Typography variant='body2'>
-                { state === 'error' ? 'Error listing workloads.' : <>There is no nothing running yet. Select an application from the <Link to='/'>collection</Link>, and click on the run button to install it.</> }
+                { state === 'error' ? 'Error listing workloads.' : <>There is no application running yet.</> }
               </Typography>
         }
       </Stack>

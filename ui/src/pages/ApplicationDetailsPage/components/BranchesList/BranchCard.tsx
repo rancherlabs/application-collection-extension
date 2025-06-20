@@ -47,7 +47,7 @@ export default function BranchCard({ branch, version, artifact }:
         branch={ branch.name } 
         artifact={ artifact } 
         version={ version } 
-        isOpen={ installDialogOpen } 
+        open={ installDialogOpen } 
         onSubmit={ onInstall } 
         onDismiss={ () => setInstallDialogOpen(false) }/>
     </>
