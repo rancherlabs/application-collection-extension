@@ -35,7 +35,7 @@ export default function UpgradeDialog({ artifact, workload, open, onSubmit = () 
 
   function upgrade() {
     setState('updating')
-    upgradeHelmChart(ddClient, artifact, workload, values)
+    upgradeHelmChart(ddClient, workload, values, artifact)
       .then(result => {
         onSubmit(result)
         setState('ready')
