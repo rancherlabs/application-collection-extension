@@ -1,15 +1,15 @@
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, IconButton, Stack, TextField, Tooltip, Typography } from '@mui/material'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
-import { HelmListItem, editHelmChart } from '../../../clients/helm'
 import { createDockerDesktopClient } from '@docker/extension-api-client'
 import { AddCircleOutline, ContentCopy, ExpandMore, RemoveCircleOutline } from '@mui/icons-material'
 import { parse } from 'yaml'
-import Modal from '../../../components/Modal'
+import { editHelmChart, HelmListItem } from '../../clients/helm'
+import Modal from '../Modal'
 
 const ddClient = createDockerDesktopClient()
 
-export default function EditDialog({ workload, open, onSubmit = () => null, onDismiss = () => null }: 
-{ workload: HelmListItem, open: boolean, onSubmit?: (result: HelmListItem) => any, onError?: (e: any) => any, onDismiss?: () => any }) {
+export default function EditDialog({ workload, open, onSubmit = () => null, onClose = () => null }: 
+{ workload: HelmListItem, open: boolean, onSubmit?: (result: HelmListItem) => any, onError?: (e: any) => any, onClose?: () => any }) {
   const [ values, setValues ] = useState<{ key: string, value: string }[]>([])
   const [ currentValue, setCurrentValue ] = useState<{ key?: string, value?: string }>()
   const [ error, setError ] = useState<string>()
@@ -36,7 +36,7 @@ export default function EditDialog({ workload, open, onSubmit = () => null, onDi
         title='Error'
         subtitle='There was an unexpected error updating the application'
         open={ open }
-        onClose={ onDismiss }>
+        onClose={ onClose }>
         <Box sx={ { p: 2, background: 'rgba(125, 125, 125, 0.1)' } }>
           { 
             error.split('\n')
@@ -66,7 +66,7 @@ export default function EditDialog({ workload, open, onSubmit = () => null, onDi
       title={ `Edit ${ workload.name }` }
       subtitle='Set Helm Chart values manually or through a YAML file'
       open={ open }
-      onClose={ onDismiss }
+      onClose={ onClose }
       onSubmit={ upgrade }>
       { 
         values.map((v, i) => <Stack key={ `value-${i}` } direction='row' alignItems='center' spacing={ 2 } sx={ { mt: 2 } }>
@@ -132,7 +132,7 @@ export default function EditDialog({ workload, open, onSubmit = () => null, onDi
       <Stack direction='row' justifyContent='space-between' sx={ { mt: 2 } }>
         <Button 
           color='inherit'
-          onClick={ onDismiss }
+          onClick={ onClose }
           disabled={ state === 'updating' }>Cancel</Button>
         {
           state === 'updating' ? 
