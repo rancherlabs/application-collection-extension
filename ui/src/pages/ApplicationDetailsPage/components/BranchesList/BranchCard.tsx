@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom'
 import moment from 'moment'
 import { AdjustOutlined, LayersOutlined, SvgIconComponent, SyncOutlined } from '@mui/icons-material'
 import GitBranch from '../../../../components/GitBranch/GitBranch'
-import InstallDialog from '../InstallDialog'
 import { useState } from 'react'
 import HintIcon, { LoadingHintIcon } from './HintIcon'
+import InstallDialog from '../../../../components/Helm/InstallDialog'
 
 export default function BranchCard({ branch, version, artifact }: 
 { branch: { name: string, pattern: string }, version: string, artifact: ArtifactListItemReducedDTO }) {
@@ -49,7 +49,7 @@ export default function BranchCard({ branch, version, artifact }:
         version={ version } 
         open={ installDialogOpen } 
         onSubmit={ onInstall } 
-        onDismiss={ () => setInstallDialogOpen(false) }/>
+        onClose={ () => setInstallDialogOpen(false) }/>
     </>
   )
 }
