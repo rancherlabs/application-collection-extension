@@ -5,7 +5,7 @@ import moment from 'moment'
 import { useNavigate } from 'react-router-dom'
 import { NotificationsOffOutlined, NotificationsOutlined } from '@mui/icons-material'
 
-export default function NotificationItem({ notification, onClose }: { notification: Notification, onClose?: () => void }) {
+export default function NotificationItem({ notification, onClose, location }: { notification: Notification, onClose: () => void, location?: string }) {
   const navigate = useNavigate()
   const dispatch = useNotificationsDispatch()
 
@@ -84,8 +84,13 @@ export default function NotificationItem({ notification, onClose }: { notificati
             } }>
             <Button
               onClick={ () => {
-                navigate(notification.href as string)
-                if (onClose) onClose()
+                if (location === notification.href) {
+                  navigate(0)
+                } else {
+                  navigate(notification.href as string)
+                }
+                dispatch({ type: 'dismiss', payload: notification })
+                onClose()
               } }
               variant='contained'
               size='small'>

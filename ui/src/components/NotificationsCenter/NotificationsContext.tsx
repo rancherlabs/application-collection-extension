@@ -91,9 +91,13 @@ function notificationsReducer(notifications: Notification[], action: Notificatio
 const NotificationsContext = createContext<Notification[]>([])
 const NotificationsDispatchContext = createContext<Dispatch<NotificationAction>>(() => [])
 
+const OpenContext = createContext<boolean>(false)
+const OpenDispatchContext = createContext<Dispatch<boolean>>(() => false)
+
 export default function NotificationsProvider({ children }: { children: React.ReactNode }) {
   const ddClient = createDockerDesktopClient()
   const [ notifications, dispatch ] = useReducer(notificationsReducer, [])
+  const [ open, dispatchOpen ] = useReducer((_: boolean, action: boolean) => action, false)
 
   useEffect(() => {
     ddClient.extension.vm?.service?.get('/notifications')
@@ -120,7 +124,11 @@ export default function NotificationsProvider({ children }: { children: React.Re
   return (
     <NotificationsContext.Provider value={ notifications }>
       <NotificationsDispatchContext.Provider value={ dispatch }>
-        { children }
+        <OpenContext.Provider value={ open }>
+          <OpenDispatchContext.Provider value={ dispatchOpen }>
+            { children }
+          </OpenDispatchContext.Provider>
+        </OpenContext.Provider>
       </NotificationsDispatchContext.Provider>
     </NotificationsContext.Provider>
   )
@@ -130,6 +138,14 @@ export function useNotificationsContext() {
   return useContext(NotificationsContext)
 }
 
+export function useNotificationsCenterOpenContext() {
+  return useContext(OpenContext)
+}
+
 export function useNotificationsDispatch() {
   return useContext(NotificationsDispatchContext)
+}
+
+export function useNotificationsCenterOpenDispatch() {
+  return useContext(OpenDispatchContext)
 }

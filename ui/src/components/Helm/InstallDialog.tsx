@@ -6,7 +6,7 @@ import { createDockerDesktopClient } from '@docker/extension-api-client'
 import { AddCircleOutline, ContentCopy, ExpandMore, RemoveCircleOutline } from '@mui/icons-material'
 import Modal from '../Modal'
 import FilePicker from './FilePicker'
-import { Notification, useNotificationsDispatch } from '../NotificationsCenter/NotificationsContext'
+import { Notification, useNotificationsCenterOpenDispatch, useNotificationsDispatch } from '../NotificationsCenter/NotificationsContext'
 import { v4 as uuid } from 'uuid'
 
 const ddClient = createDockerDesktopClient()
@@ -18,7 +18,8 @@ export default function InstallDialog({ branch, artifact, version, open, onSubmi
   const [ state, setState ] = useState<'loading' | 'ready' | 'installing' | 'error'>()
   const [ error, setError ] = useState<string>()
   
-  const dispatch = useNotificationsDispatch()
+  const notificationsDispatch = useNotificationsDispatch()
+  const notificationsCenterOpenDispatch = useNotificationsCenterOpenDispatch()
 
   useEffect(() => {
     if (open && values.length === 0) {
@@ -51,7 +52,7 @@ export default function InstallDialog({ branch, artifact, version, open, onSubmi
       timestamp: new Date().getTime()
     }
     installHelmChart(ddClient, branch, artifact, version, values)
-      .then(result => dispatch({
+      .then(result => notificationsDispatch({
         type: 'update',
         payload: {
           ...notification,
@@ -64,7 +65,7 @@ export default function InstallDialog({ branch, artifact, version, open, onSubmi
           href: `/workloads/${result.name}`
         }
       }))
-      .catch(() => dispatch({
+      .catch(() => notificationsDispatch({
         type: 'update',
         payload: {
           ...notification,
@@ -78,12 +79,13 @@ export default function InstallDialog({ branch, artifact, version, open, onSubmi
         }
       }))
 
-    dispatch({
+    notificationsDispatch({
       type: 'add',
       payload: notification
     })
     setState('ready')
     onSubmit()
+    notificationsCenterOpenDispatch(true)
   }
 
   function LoadingForm() {

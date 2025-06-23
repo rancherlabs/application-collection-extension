@@ -4,13 +4,13 @@ import { useAuth } from './AuthContext'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { AppsOutlined, EditOutlined, KeyboardArrowLeft, NotificationsNone, SettingsOutlined } from '@mui/icons-material'
 import AuthenticationForm from './pages/SettingsPage/components/AuthenticationForm'
-import { useState } from 'react'
-import { useNotificationsContext } from './components/NotificationsCenter/NotificationsContext'
+import { useNotificationsCenterOpenContext, useNotificationsCenterOpenDispatch, useNotificationsContext } from './components/NotificationsCenter/NotificationsContext'
 import NotificationsCenter from './components/NotificationsCenter'
 
 export function Layout() {
   const notifications = useNotificationsContext()
-  const [ notificationsCenterOpen, setNotificationsCenterOpen ] = useState<boolean>(false)
+  const notificationsCenterOpen = useNotificationsCenterOpenContext()
+  const dispatchNotificationsCenterOpen = useNotificationsCenterOpenDispatch()
 
   const auth = useAuth()
   const navigate = useNavigate()
@@ -38,7 +38,7 @@ export function Layout() {
           <Outlet />
         </Container>
         <Stack direction='column' alignItems='start' width='fit-content' sx={ { mr: 2 } }>
-          <Button onClick={ () => setNotificationsCenterOpen(true) }>
+          <Button onClick={ () => dispatchNotificationsCenterOpen(true) }>
             {
               notifications.find(n => !n.dismissed) ?
                 <Badge 
@@ -65,7 +65,7 @@ export function Layout() {
       </Box>
       <NotificationsCenter
         open={ notificationsCenterOpen }
-        onClose={ () => setNotificationsCenterOpen(false) } />
+        onClose={ () => dispatchNotificationsCenterOpen(false) } />
     </>
   )
 }

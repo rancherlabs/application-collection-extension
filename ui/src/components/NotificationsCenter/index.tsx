@@ -2,9 +2,12 @@ import { useNotificationsContext, useNotificationsDispatch } from './Notificatio
 import NotificationItem from './NotificationItem'
 import { Button, Drawer, Stack, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 import { useState } from 'react'
+import { useLocation } from 'react-router-dom'
 
 
 export default function NotificationsCenter({ id, open, onClose }: { id?: string, open: boolean, onClose: () => any }) {
+  const location = useLocation()
+
   const notifications = useNotificationsContext()
   const dispatch = useNotificationsDispatch()
 
@@ -73,6 +76,7 @@ export default function NotificationsCenter({ id, open, onClose }: { id?: string
             .sort((a, b) => b.timestamp - a.timestamp)
             .map((n, i) => <NotificationItem 
               key={ `notification-${i}` }
+              location={ location?.pathname }
               notification={ n }
               onClose={ onClose } />
             )
