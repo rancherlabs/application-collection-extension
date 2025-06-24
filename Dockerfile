@@ -73,8 +73,10 @@ LABEL org.opencontainers.image.title="SUSE Application Collection" \
     com.docker.desktop.extension.icon="https://raw.githubusercontent.com/rancherlabs/application-collection-extension/refs/heads/main/assets/rancher-logo-cow-blue.svg" \
     com.docker.extension.screenshots="[\
         {\"alt\":\"Collection\", \"url\":\"https://raw.githubusercontent.com/rancherlabs/application-collection-extension/refs/heads/main/assets/01_collection.png\"}, \
-        {\"alt\":\"Application Details\", \"url\":\"https://raw.githubusercontent.com/rancherlabs/application-collection-extension/refs/heads/main/assets/02_application-details.png\"}, \
-        {\"alt\":\"Workloads\", \"url\":\"https://raw.githubusercontent.com/rancherlabs/application-collection-extension/refs/heads/main/assets/03_workloads.png\"}\
+        {\"alt\":\"Application details\", \"url\":\"https://raw.githubusercontent.com/rancherlabs/application-collection-extension/refs/heads/main/assets/02_application-details.png\"}, \
+        {\"alt\":\"Chart values form\", \"url\":\"https://raw.githubusercontent.com/rancherlabs/application-collection-extension/refs/heads/main/assets/03_install-form.png\"}, \
+        {\"alt\":\"Workloads\", \"url\":\"https://raw.githubusercontent.com/rancherlabs/application-collection-extension/refs/heads/main/assets/04_workloads.png\"}, \
+        {\"alt\":\"Workload details\", \"url\":\"https://raw.githubusercontent.com/rancherlabs/application-collection-extension/refs/heads/main/assets/05_workload-details.png\"}\
     ]" \
     com.docker.extension.detailed-description="\
         Build and run cloud-native applications with SUSE's trusted, curated, and continuously updated application collection.\
