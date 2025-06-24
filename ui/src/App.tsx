@@ -1,4 +1,4 @@
-import { createTheme, styled, ThemeProvider, useMediaQuery } from '@mui/material'
+import { createTheme, ThemeProvider, useMediaQuery } from '@mui/material'
 import { createHashRouter, RouterProvider } from 'react-router-dom'
 import ApplicationsPage from './pages/ApplicationsPage'
 import ApplicationDetailsPage, { loader as ApplicationDetailsLoader } from './pages/ApplicationDetailsPage'
@@ -7,7 +7,7 @@ import WorkloadsPage from './pages/WorkloadsPage'
 import { AuthProvider } from './AuthContext'
 import { Layout } from './Layout'
 import { useMemo } from 'react'
-import { MaterialDesignContent, SnackbarProvider } from 'notistack'
+import NotificationsProvider from './components/NotificationsCenter/NotificationsContext'
 import WorkloadDetailsPage, { loader as WorkloadDetailsLoader } from './pages/WorkloadDetailsPage'
 
 const themeOptions = (mode: 'light' | 'dark' = 'light') => {
@@ -165,12 +165,6 @@ declare module '@mui/material/Typography' {
   }
 }
 
-const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
-  '&.notistack-MuiContent': {
-    fontFamily: 'Poppins',
-  },
-}))
-
 const router = createHashRouter([
   {
     path: '/',
@@ -217,11 +211,11 @@ export function App() {
   
   return (
     <ThemeProvider theme={ theme }>
-      <SnackbarProvider maxSnack={ 3 } Components={ { default: StyledMaterialDesignContent } }>
-        <AuthProvider>
+      <AuthProvider>
+        <NotificationsProvider>
           <RouterProvider router={ router } />
-        </AuthProvider>
-      </SnackbarProvider>
+        </NotificationsProvider>
+      </AuthProvider>
     </ThemeProvider>
   )
 }

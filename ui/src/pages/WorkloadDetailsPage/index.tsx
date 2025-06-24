@@ -1,6 +1,6 @@
 import { createDockerDesktopClient } from '@docker/extension-api-client'
 import { Alert, Box, Button, Card, Skeleton, Stack, Tooltip, Typography } from '@mui/material'
-import { useLoaderData, useNavigate } from 'react-router-dom'
+import { Link, useLoaderData, useNavigate } from 'react-router-dom'
 import { findRelease, HelmListItem, HelmReleaseDetails } from '../../clients/helm'
 import { ChangeCircleOutlined, Delete, EditOutlined, HomeOutlined, LanOutlined, SyncOutlined, Upgrade } from '@mui/icons-material'
 import moment from 'moment'
@@ -26,20 +26,24 @@ type PortMapping = {
 
 const ddClient = createDockerDesktopClient()
 
-export async function loader({ params }: { params: any }): Promise<HelmReleaseDetails> {
-  return await findRelease(ddClient, params.name)
+export async function loader({ params }: { params: any }): Promise<HelmReleaseDetails | null> {
+  try {
+    return await findRelease(ddClient, params.name)
+  } catch (e) {
+    return null
+  }
 }
 
 export default function WorkloadDetailsPage() {
-  const [ release, setRelease ] = useState<HelmReleaseDetails>(useLoaderData() as any)
+  const [ release, setRelease ] = useState<HelmReleaseDetails | null>(useLoaderData() as any)
   const [ portMappings, setPortMappings ] = useState<PortMapping[]>([])
   const [ update, setUpdate ] = useState<ArtifactListItemReducedDTO | null>()
   const [ editDialogOpen, setEditDialogOpen ] = useState<boolean>(false)
   const [ updateDialogOpen, setUpdateDialogOpen ] = useState<boolean>(false)
   const [ deleteDialogOpen, setDeleteDialogOpen ] = useState<boolean>(false)
 
-  const auth = useAuth()
   const navigate = useNavigate()
+  const auth = useAuth()
 
   useEffect(() => {
     function appSlugName(name: string): string {
@@ -47,63 +51,74 @@ export default function WorkloadDetailsPage() {
       return chunks.filter((chunk, i) => i < chunks.length - 1).join('-')
     }
 
-
-    getServices(ddClient, [{ key: 'app.kubernetes.io/instance', value: release.name }], release.namespace)
-      .then(chartServices => {
-        const mappings: PortMapping[] = chartServices
-          .filter(s => s.spec && s.spec.type === 'NodePort' && s.spec.ports)
-          .flatMap(nodePort => ((nodePort.spec as V1ServiceSpec).ports as V1ServicePort[])
-            .flatMap(port => {
-              return {
-                targetPort: port.targetPort as number,
-                nodePort: port.nodePort as number,
-                protocol: port.protocol as string
-              }
-            })
-          )
+    if (release) {
+      getServices(ddClient, [{ key: 'app.kubernetes.io/instance', value: release.name }], release.namespace)
+        .then(chartServices => {
+          const mappings: PortMapping[] = chartServices
+            .filter(s => s.spec && s.spec.type === 'NodePort' && s.spec.ports)
+            .flatMap(nodePort => ((nodePort.spec as V1ServiceSpec).ports as V1ServicePort[])
+              .flatMap(port => {
+                return {
+                  targetPort: port.targetPort as number,
+                  nodePort: port.nodePort as number,
+                  protocol: port.protocol as string
+                }
+              })
+            )
         
-        setPortMappings(mappings)
-      })
+          setPortMappings(mappings)
+        })
     
-    componentsClient(auth?.auth || null).getComponent(appSlugName(release.name))
-      .then(response => {
-        const component = response.data
+      componentsClient(auth || null).getComponent(appSlugName(release.name))
+        .then(response => {
+          const component = response.data
 
-        const currentBranch = component.branches.find(branch => release.app_version.match(new RegExp(branch.branch_pattern))) as BranchDTO
-        const newVersion = currentBranch.versions?.find(version => compareVersions(version.version_number, release.app_version) > 0 &&
+          const currentBranch = component.branches.find(branch => release.app_version.match(new RegExp(branch.branch_pattern))) as BranchDTO
+          const newVersion = currentBranch.versions?.find(version => compareVersions(version.version_number, release.app_version) > 0 &&
           version.artifacts.find(artifact => artifact.packaging_format === ArtifactListItemReducedDTOPackagingFormatEnum.HelmChart))
-          ?.artifacts.find(artifact => artifact.packaging_format === ArtifactListItemReducedDTOPackagingFormatEnum.HelmChart)
+            ?.artifacts.find(artifact => artifact.packaging_format === ArtifactListItemReducedDTOPackagingFormatEnum.HelmChart)
         
-        if (newVersion) {
-          setUpdate(newVersion)
-        } else {
-          const newBranch = component.branches.find(branch => branch !== currentBranch && 
+          if (newVersion) {
+            setUpdate(newVersion)
+          } else {
+            const newBranch = component.branches.find(branch => branch !== currentBranch && 
           branch.versions && 
           branch.versions.length > 0 && 
           branch.versions.find(version => compareVersions(version.version_number, release.app_version) > 0))
-          const newBranchVersion = newBranch?.versions?.flatMap(version => version.artifacts)
-            .find(artifact => artifact.packaging_format === ArtifactListItemReducedDTOPackagingFormatEnum.HelmChart)
+            const newBranchVersion = newBranch?.versions?.flatMap(version => version.artifacts)
+              .find(artifact => artifact.packaging_format === ArtifactListItemReducedDTOPackagingFormatEnum.HelmChart)
         
-          if (newBranchVersion) {
-            setUpdate(newBranchVersion)
-          } else {
-            setUpdate(null)
+            if (newBranchVersion) {
+              setUpdate(newBranchVersion)
+            } else {
+              setUpdate(null)
+            }
           }
-        }
-      })
-      .catch((e) => console.error('Unexpected error fetching component data', e))
-
+        })
+        .catch((e) => console.error('Unexpected error fetching component data', e))
+    }
   }, [release])
-
+  
   function onUpdate(newRelease: HelmListItem) {
     setUpdate(undefined)
-    findRelease(ddClient, release.name)
-      .then(details => setRelease(details))
+    if (release) {
+      findRelease(ddClient, release.name)
+        .then(details => setRelease(details))
+    }
   }
 
   function onDelete() {
     navigate(-1)
   }
+
+  if (!release) {
+    return <>
+      <Typography variant='h2' gutterBottom>Workload not found!</Typography>
+      <Typography gutterBottom>This release does no longer exist. Maybe it lives in a different kubernetes context or you deleted it at some point.</Typography>
+      <Typography>Click <Link to='/workloads'>here</Link> to go back.</Typography>
+    </>
+  }
+
 
   return <>
     <Stack direction='row' alignItems='start' justifyContent='space-between'>

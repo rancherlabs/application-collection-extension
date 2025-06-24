@@ -207,7 +207,6 @@ export async function installHelmChart(
   version: string, 
   values: { key: string, value:string }[] = [{ key: 'global.imagePullSecrets[0].name', value: 'application-collection' }]
 ): Promise<HelmListItem> {
-
   return new Promise((resolve, reject) => {
     findKubernetesSecret(ddClient)
       .then(async (isSecretStored) => {
