@@ -35,7 +35,8 @@ export default function NotificationItem({ notification, onClose, location }: { 
         <StatusIcon status={ notification.type } />
         <Stack
           flexGrow={ 1 }
-          direction='column' >
+          direction='column'
+          overflow='hidden' >
           <Stack
             direction='row'
             alignItems='start'
@@ -71,8 +72,13 @@ export default function NotificationItem({ notification, onClose, location }: { 
               }
             </Button>
           </Stack>
-          <Typography
-            variant='body2'>{ notification.description }</Typography>
+          {
+            notification.description.split('\n')
+              .filter(line => line)
+              .map((line, i) => <Typography
+                key={ `desc-line-${i}` }
+                variant='body2'>{ line }</Typography>)
+          }
         </Stack>
       </CardContent>
       {

@@ -8,6 +8,8 @@ import Modal from '../Modal'
 import FilePicker from './FilePicker'
 import { Notification, useNotificationsCenterOpenDispatch, useNotificationsDispatch } from '../NotificationsCenter/NotificationsContext'
 import { v4 as uuid } from 'uuid'
+import { checkDocker } from '../../clients/docker'
+import { checkKubernetes } from '../../clients/kubectl'
 
 const ddClient = createDockerDesktopClient()
 
@@ -51,41 +53,54 @@ export default function InstallDialog({ branch, artifact, version, open, onSubmi
       dismissed: false,
       timestamp: new Date().getTime()
     }
-    installHelmChart(ddClient, branch, artifact, version, values)
-      .then(result => notificationsDispatch({
-        type: 'update',
-        payload: {
-          ...notification,
-          title: 'Installed ' + artifact.name,
-          description: 'Successfully installed release ' + result.name,
-          type: 'success',
-          dismissed: false,
-          timestamp: new Date().getTime(),
-          actionText: 'View details',
-          href: `/workloads/${result.name}`
-        }
-      }))
-      .catch(() => notificationsDispatch({
-        type: 'update',
-        payload: {
-          ...notification,
-          title: 'Error installing ' + artifact.name,
-          description: 'Open the workloads page to see more details about the error.',
-          type: 'error',
-          dismissed: false,
-          timestamp: new Date().getTime(),
-          actionText: 'View details',
-          href: '/workloads'
-        }
-      }))
 
-    notificationsDispatch({
-      type: 'add',
-      payload: notification
-    })
-    setState('ready')
-    onSubmit()
-    notificationsCenterOpenDispatch(true)
+    checkDocker(ddClient)
+      .then(() => checkKubernetes(ddClient)
+        .then(() => {
+          installHelmChart(ddClient, branch, artifact, version, values)
+            .then(result => notificationsDispatch({
+              type: 'update',
+              payload: {
+                ...notification,
+                title: 'Installed ' + artifact.name,
+                description: 'Successfully installed release ' + result.name,
+                type: 'success',
+                dismissed: false,
+                timestamp: new Date().getTime(),
+                actionText: 'View details',
+                href: `/workloads/${result.name}`
+              }
+            }))
+            .catch((error) => notificationsDispatch({
+              type: 'update',
+              payload: {
+                ...notification,
+                title: 'Error installing ' + artifact.name,
+                description: error,
+                type: 'error',
+                dismissed: false,
+                timestamp: new Date().getTime()
+              }
+            }))
+
+          notificationsDispatch({
+            type: 'add',
+            payload: notification
+          })
+          setState('ready')
+          onSubmit()
+          notificationsCenterOpenDispatch(true)
+        })
+        .catch(e => {
+          console.error('Error checking kubernetes existence', e)
+          setError('Error with kubernetes, make sure the cluster is up and reachable')
+          setState('error')
+        }))
+      .catch(e => {
+        console.error('Error checking docker engine is running', e)
+        setError('Error with docker engine, make sure it is running')
+        setState('error')
+      })
   }
 
   function LoadingForm() {
