@@ -43,9 +43,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         dispatch({ type: 'set', payload: auth })
       } catch (e) {
-        console.error(e)
+        console.error('Unexpected error fetching authentication from backend', e)
         if (currentAttempt < maxAttempts && (!(e as ServiceError).statusCode || (e as ServiceError).statusCode >= 500)) {
           setTimeout(() => getCredentialsFromBackend(currentAttempt + 1, maxAttempts, intervalWaitMillis), intervalWaitMillis)
+        } else {
+          dispatch({ type: 'set', payload: null })
         }
       }
     }
