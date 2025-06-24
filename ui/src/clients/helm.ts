@@ -272,47 +272,14 @@ export async function editHelmChart(
   release: HelmListItem,
   values: { key: string, value:string }[] = [{ key: 'global.imagePullSecrets[0].name', value: 'application-collection' }]
 ): Promise<HelmListItem> {
-  return new Promise((resolve, reject) => {
-    findKubernetesSecret(ddClient)
-      .then((isSecretStored) => {
-        if (!isSecretStored) {
-          reject('Secret application-collection does not exist. Please refresh the authentication settings.')
-        } else {
-          const description: Description = {
-            message: `Edit version ${release.version} values`,
-            version: release.version
-          }
-          ddClient.extension.host?.cli.exec('helm', [ 
-            'upgrade', release.name, `oci://dp.apps.rancher.io/charts/${release.chart.split('-').slice(0, -1).join('-')}`, 
-            '-n', release.namespace,
-            ...values.flatMap(v => ['--set', v.key + '=' + v.value ]),
-            '--description', `'${JSON.stringify(description)}'`,
-            '-o', 'json' ], { })
-            .then(upgradeResult => {
-              const upgrade: HelmInstall = JSON.parse(upgradeResult.stdout)
-              resolve({
-                name: upgrade.name,
-                namespace: upgrade.namespace,
-                status: mapStatus(upgrade.info.status),
-                app_version: upgrade.chart.metadata.appVersion,
-                chart: release.chart,
-                version: release.version
-              })
-            })
-            .catch(e => {
-              console.error('Unexpected error editing release', e)
-              reject('Unexpected error editing release: ' + e.stderr)
-            })
-        }
-      })
-  })
+  return upgradeHelmChart(ddClient, release, values)
 }
 
 export async function upgradeHelmChart(
-  ddClient: DockerDesktopClient, 
-  artifact: ArtifactListItemReducedDTO | ArtifactDTO, 
+  ddClient: DockerDesktopClient,
   release: HelmListItem,
-  values: { key: string, value:string }[] = [{ key: 'global.imagePullSecrets[0].name', value: 'application-collection' }]
+  values: { key: string, value:string }[] = [{ key: 'global.imagePullSecrets[0].name', value: 'application-collection' }],
+  artifact?: ArtifactListItemReducedDTO | ArtifactDTO, 
 ): Promise<HelmListItem> {
   return new Promise((resolve, reject) => {
     findKubernetesSecret(ddClient)
@@ -320,35 +287,64 @@ export async function upgradeHelmChart(
         if (!isSecretStored) {
           reject('Secret application-collection does not exist. Please refresh the authentication settings.')
         } else {
-          const description: Description = {
-            message: `Upgrade from ${release.version} to ${artifact.version}`,
-            version: artifact.version as string,
-            revision: artifact.revision,
-            digest: artifact.digest.value
-          }
-          ddClient.extension.host?.cli.exec('helm', [ 
-            'upgrade', release.name, `oci://dp.apps.rancher.io/charts/${artifact.name.split(':')[0]}`, 
-            '-n', release.namespace,
-            '--version', artifact?.version as string, 
-            ...values.flatMap(v => ['--set', v.key + '=' + v.value ]),
-            '--description', `'${JSON.stringify(description)}'`,
-            '-o', 'json' ], { })
-            .then(upgradeResult => {
-              const upgrade: HelmInstall = JSON.parse(upgradeResult.stdout)
-              resolve({
-                name: upgrade.name,
-                namespace: upgrade.namespace,
-                status: mapStatus(upgrade.info.status),
-                app_version: upgrade.chart.metadata.appVersion,
-                chart: `${artifact.name.split(':')[0]}-${artifact.version}`,
-                version: artifact.version as string
-              })
-            })
-            .catch(e => {
-              console.error('Unexpected error upgrading release', e)
-              reject('Unexpected error upgrading release: ' + e.stderr)
-            })
+          const description: Description =  artifact ? 
+            {
+              message: `Upgrade from ${release.version} to ${artifact.version}`,
+              version: artifact.version as string,
+              revision: artifact.revision,
+              digest: artifact.digest.value
+            } :
+            {
+              message: `Edit version ${release.version} values`,
+              version: release.version
+            }
 
+          let stdout = ''
+          let stderr = ''
+
+          const repo = artifact ? 
+            `oci://dp.apps.rancher.io/charts/${artifact.name.split(':')[0]}` :
+            `oci://dp.apps.rancher.io/charts/${release.chart.split('-').slice(0, -1).join('-')}`
+
+          const additionalArgs: string[] = artifact ? [ '--version', artifact.version as string ] : []
+
+          ddClient.extension.host?.cli.exec('helm', [ 
+            'upgrade', release.name, repo, 
+            '-n', release.namespace,
+            ...values.flatMap(v => ['--set', v.key + '=' + v.value ]),
+            '--description', JSON.stringify(description),
+            '-o', 'json',
+            ...additionalArgs ], { 
+            stream: { 
+              onOutput: (installResult) => {
+                if (installResult.stdout) {
+                  stdout += installResult.stdout
+                } else {
+                  stderr += installResult.stderr
+                }
+              },
+              onError: (e) => {
+                console.error('Unexpected error upgrading release', e)
+                reject('Unexpected error upgrading release: ' + e.stderr)
+              },
+              onClose: (code) => {
+                if (code > 0) {
+                  console.error(`Unexpected exit code installing release [code=${code}, stderr=${stderr}, stdout=${stdout}]`)
+                  reject (stderr)
+                } else {
+                  const upgrade: HelmInstall = JSON.parse(stdout)
+                  resolve({
+                    name: upgrade.name,
+                    namespace: upgrade.namespace,
+                    status: mapStatus(upgrade.info.status),
+                    app_version: upgrade.chart.metadata.appVersion,
+                    chart: artifact ? `${artifact.name.split(':')[0]}-${artifact.version}` : release.chart,
+                    version: artifact ? artifact.version as string : release.version
+                  })
+                }
+              },
+            }
+          })
         }
       })
   })
