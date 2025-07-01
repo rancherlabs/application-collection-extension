@@ -14,7 +14,7 @@ export default function HintIcon({ tooltip, icon, text }: { tooltip: string, ico
   }
 
   return (
-    <Tooltip title={ tooltip } PopperProps={ popperProps }>
+    <Tooltip title={ tooltip } slotProps={ { popper: popperProps } }>
       <Stack direction='row' justifyContent='start' alignItems='center' spacing={ 0.5 }>
         <SvgIcon component={ icon } fontSize='small' sx={ { color: 'text.secondary' } } />
         <Typography color='text.secondary'>{ text }</Typography>
