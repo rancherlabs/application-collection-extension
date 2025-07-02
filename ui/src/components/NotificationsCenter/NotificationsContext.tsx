@@ -101,8 +101,8 @@ export default function NotificationsProvider({ children }: { children: React.Re
 
   useEffect(() => {
     ddClient.extension.vm?.service?.get('/notifications')
-      .then((data) => {
-        const backendNotifications = data as Notification[]
+      .then((response: any) => {
+        const backendNotifications = response.data ? response.data : response
         
         if (backendNotifications.length === 0) {
           const welcomeNotification: Notification = {
