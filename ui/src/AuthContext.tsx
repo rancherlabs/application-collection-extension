@@ -39,7 +39,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async function getCredentialsFromBackend(currentAttempt: number, maxAttempts: number, intervalWaitMillis: number) {
       try {
         const response = await ddClient.extension.vm?.service?.get('/user/auth') as any
-        const auth = typeof response === 'string' ? atob(response) : atob(response.data)
+        const auth = response.data ? atob(response.data) : atob(response)
 
         dispatch({ type: 'set', payload: auth })
       } catch (e) {
