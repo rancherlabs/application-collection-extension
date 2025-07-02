@@ -20,8 +20,8 @@ export default function UpgradeDialog({ artifact, workload, open, onSubmit = () 
     if (open && values.length === 0) {
       setState('loading')
       ddClient.extension.vm?.service?.get(`/charts/${artifact.name.split(':')[0]}/${artifact.version}/local-values`)
-        .then(result => {
-          const localValues: { key: string, value: string }[] = (result as any).values
+        .then((response: any) => {
+          const localValues: { key: string, value: string }[] = response.data ? response.data.values : response.values
           if (localValues.length > 0) {
             setValues(localValues)
           } else {
