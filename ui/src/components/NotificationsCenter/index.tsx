@@ -30,10 +30,12 @@ export default function NotificationsCenter({ id, open, onClose }: { id?: string
       anchor='right'
       open={ open }
       onClose={ onClose }
-      PaperProps={ {
-        sx: {
-          p: 1,
-          overflow: 'scroll'
+      slotProps={ {
+        paper:{
+          sx: {
+            p: 1,
+            overflow: 'scroll'
+          }
         }
       } }>
       <Stack
