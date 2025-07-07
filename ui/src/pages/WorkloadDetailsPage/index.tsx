@@ -1,5 +1,5 @@
 import { createDockerDesktopClient } from '@docker/extension-api-client'
-import { Alert, Box, Button, Card, Grid2 as Grid, Skeleton, Stack, Tooltip, Typography } from '@mui/material'
+import { Alert, Box, Button, Card, Grid, Skeleton, Stack, Tooltip, Typography } from '@mui/material'
 import { Link, useLoaderData, useNavigate } from 'react-router-dom'
 import { findRelease, HelmListItem, HelmReleaseDetails } from '../../clients/helm'
 import { ChangeCircleOutlined, Delete, EditOutlined, HomeOutlined, LanOutlined, SyncOutlined, Upgrade } from '@mui/icons-material'
