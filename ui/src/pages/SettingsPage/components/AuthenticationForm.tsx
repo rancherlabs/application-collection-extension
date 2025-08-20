@@ -89,7 +89,6 @@ export default function AuthenticationForm() {
               setState('error')
             })
         )
-        
     }
   }
 
@@ -152,9 +151,9 @@ export default function AuthenticationForm() {
         </Alert>
       }
       <Card sx={ { mt: 3 } } variant='outlined'>
-        <CardContent>
+        <CardContent sx={ { p: 3 } }>
           <Typography>The following will be configured automatically:</Typography>
-          <List sx={ { width: '100%' } }>
+          <List sx={ { width: '100%', pb: 0 } }>
             <ListItem sx={ { alignItems: 'end' } }>
               <ListItemText 
                 primary='Docker'
@@ -167,7 +166,7 @@ export default function AuthenticationForm() {
                 secondary='For pulling and installing Helm Charts' />
               <Typography variant='code' color='text.secondary' sx={ { mb: 0.75 } }>helm registry login</Typography>
             </ListItem>
-            <ListItem sx={ { alignItems: 'end' } }>
+            <ListItem sx={ { alignItems: 'end', pb: 0 } }>
               <ListItemText
                 primary='kubectl'
                 secondary='For running kubernetes workloads' />

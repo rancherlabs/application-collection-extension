@@ -17,46 +17,42 @@ export default function ApplicationsPage() {
   const auth = useAuth()
 
   useEffect(() => {
-    if (auth) {
-      applicationsClient(auth).getApplications(undefined, undefined, ApplicationDTOPackagingFormatEnum.HelmChart)
-        .then(response => {
-          if (response.status == 200) {
-            setApplications(response.data.items)
-            setNextPage(response.data.page === response.data.total_pages ? response.data.page || 0 : nextPage + 1)
-            setTotalSize(response.data.total_size || 0)
-          }
-        })
-        .catch(e => {
-          console.error('Unexpected error fetching applications', e)
-          let content
-          if (e instanceof AxiosError && e.status == 401) {
-            content = <>Authentication failed. Go to the <Link to='/settings'>Settings page</Link> to manage the access token.</>
-          } else {
-            content = 'There was an unexpected error loading the collection. Try again in a couple of minutes.'
-          }
-          setError(<Typography color='error' sx={ { mt: 2 } }>{ content }</Typography>)
-        })
-    }
+    applicationsClient(auth || null).getApplications(undefined, undefined, ApplicationDTOPackagingFormatEnum.HelmChart)
+      .then(response => {
+        if (response.status == 200) {
+          setApplications(response.data.items)
+          setNextPage(response.data.page === response.data.total_pages ? response.data.page || 0 : nextPage + 1)
+          setTotalSize(response.data.total_size || 0)
+        }
+      })
+      .catch(e => {
+        console.error('Unexpected error fetching applications', e)
+        let content
+        if (e instanceof AxiosError && e.status == 401) {
+          content = <>Authentication failed. Go to the <Link to='/settings'>Settings page</Link> to manage the access token.</>
+        } else {
+          content = 'There was an unexpected error loading the collection. Try again in a couple of minutes.'
+        }
+        setError(<Typography color='error' sx={ { mt: 2 } }>{ content }</Typography>)
+      })
   }, [auth])
 
   function loadAppsPage() {
-    if (auth) {
-      applicationsClient(auth).getApplications(undefined, undefined, ApplicationDTOPackagingFormatEnum.HelmChart, undefined, nextPage)
-        .then((response) => {
-          setApplications([...applications, ...response.data.items])
-          setNextPage(response.data.page === response.data.total_pages ? response.data.page || 0 : nextPage + 1)
-        })
-        .catch(e => {
-          console.error('Unexpected error fetching applications', e)
-          let content
-          if (e instanceof AxiosError && e.status == 401) {
-            content = <>Authentication failed. Go to the <Link to='/settings'>Settings page</Link> to manage the access token.</>
-          } else {
-            content = 'There was an unexpected error loading the collection. Try again in a couple of minutes.'
-          }
-          setError(<Typography color='error' sx={ { mt: 2 } }>{ content }</Typography>)
-        })
-    }
+    applicationsClient(auth || null).getApplications(undefined, undefined, ApplicationDTOPackagingFormatEnum.HelmChart, undefined, nextPage)
+      .then((response) => {
+        setApplications([...applications, ...response.data.items])
+        setNextPage(response.data.page === response.data.total_pages ? response.data.page || 0 : nextPage + 1)
+      })
+      .catch(e => {
+        console.error('Unexpected error fetching applications', e)
+        let content
+        if (e instanceof AxiosError && e.status == 401) {
+          content = <>Authentication failed. Go to the <Link to='/settings'>Settings page</Link> to manage the access token.</>
+        } else {
+          content = 'There was an unexpected error loading the collection. Try again in a couple of minutes.'
+        }
+        setError(<Typography color='error' sx={ { mt: 2 } }>{ content }</Typography>)
+      })
   }
 
   return (

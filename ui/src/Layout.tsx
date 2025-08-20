@@ -1,9 +1,7 @@
 import Button from '@mui/material/Button'
-import { Badge, Box, Container, Stack, Theme, Typography, useMediaQuery } from '@mui/material'
-import { useAuth } from './AuthContext'
+import { Badge, Box, Container, Stack, Theme, useMediaQuery } from '@mui/material'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { AppsOutlined, EditOutlined, KeyboardArrowLeft, NotificationsNone, SettingsOutlined } from '@mui/icons-material'
-import AuthenticationForm from './pages/SettingsPage/components/AuthenticationForm'
 import { useNotificationsCenterOpenContext, useNotificationsCenterOpenDispatch, useNotificationsContext } from './components/NotificationsCenter/NotificationsContext'
 import NotificationsCenter from './components/NotificationsCenter'
 
@@ -12,24 +10,10 @@ export function Layout() {
   const notificationsCenterOpen = useNotificationsCenterOpenContext()
   const dispatchNotificationsCenterOpen = useNotificationsCenterOpenDispatch()
 
-  const auth = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
 
   const isSmallScreen = useMediaQuery((theme: Theme) => theme.breakpoints.down('lg'))
-
-  if (auth === null) {
-    return (
-      <Box component='main' sx={ { width: '100%', flexGrow: 1, py: 3 } }>
-        <Container maxWidth={ isSmallScreen ? 'md' : 'lg' }>
-          <Typography variant='h2'>Authorization required</Typography>
-          <Typography variant='h5' gutterBottom>This extension requires login.</Typography>
-          <Typography variant='body1' sx={ { my: 3 } }>Learn more about authentication methods in the Authentication section of our documentation site.</Typography>
-          <AuthenticationForm />
-        </Container>
-      </Box>
-    )
-  }
 
   return (
     <>
