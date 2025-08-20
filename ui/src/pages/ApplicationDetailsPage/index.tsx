@@ -21,39 +21,37 @@ export default function ApplicationDetailsPage() {
   const slugName = useLoaderData()
 
   useEffect(() => {
-    if (auth) {
-      applicationsClient(auth).getApplication(slugName as string)
-        .then(response => {
-          if (response.status == 200) {
-            setApplication(response.data)
-          }
-        }).catch(e => {
-          console.error(`Unexpected error fetching application [slugName=${slugName}]`, e)
-          let content: ReactElement
-          if (e instanceof AxiosError && e.status == 401) {
-            content = <>Authentication failed. Go to the <Link to='/settings'>Settings page</Link> to manage the access token.</>
-          } else {
-            content = <>There was an unexpected error loading the application. Try again in a couple of minutes.</>
-          }
-          setError(content)
-        })
-      componentsClient(auth).getComponent(slugName as string)
-        .then(response => {
-          if (response.status == 200) {
-            setComponent(response.data)
-          }
-        }).catch(e => {
-          console.error(`Unexpected error fetching component [slugName=${slugName}]`, e)
-          let content: ReactElement
-          if (e instanceof AxiosError && e.status == 401) {
-            content = <>Authentication failed. Go to the <Link to='/settings'>Settings page</Link> to manage the access token.</>
-          } else {
-            content = <>There was an unexpected error loading the application. Try again in a couple of minutes.</>
-          }
-          setError(content)
-        })
-    }
-  }, [])
+    applicationsClient(auth || null).getApplication(slugName as string)
+      .then(response => {
+        if (response.status == 200) {
+          setApplication(response.data)
+        }
+      }).catch(e => {
+        console.error(`Unexpected error fetching application [slugName=${slugName}]`, e)
+        let content: ReactElement
+        if (e instanceof AxiosError && e.status == 401) {
+          content = <>Authentication failed. Go to the <Link to='/settings'>Settings page</Link> to manage the access token.</>
+        } else {
+          content = <>There was an unexpected error loading the application. Try again in a couple of minutes.</>
+        }
+        setError(content)
+      })
+    componentsClient(auth || null).getComponent(slugName as string)
+      .then(response => {
+        if (response.status == 200) {
+          setComponent(response.data)
+        }
+      }).catch(e => {
+        console.error(`Unexpected error fetching component [slugName=${slugName}]`, e)
+        let content: ReactElement
+        if (e instanceof AxiosError && e.status == 401) {
+          content = <>Authentication failed. Go to the <Link to='/settings'>Settings page</Link> to manage the access token.</>
+        } else {
+          content = <>There was an unexpected error loading the application. Try again in a couple of minutes.</>
+        }
+        setError(content)
+      })
+  }, [auth])
 
   if (error) {
     return <Typography color='error' sx={ { mt: 2 } }>{ error }</Typography>
@@ -100,7 +98,9 @@ export default function ApplicationDetailsPage() {
       <Typography sx={ { my: 2 } }>{ application.description }</Typography>
       <Typography variant='h3'>Manage branches</Typography>
       <Typography variant='h5' sx={ { mb: 3 } }>Run new workloads in your cluster</Typography>
-      <BranchesList branches={ component.branches.filter(b => !b.inactive_at || new Date(b.inactive_at) > new Date()) } packagingFormat={ application.packaging_format } />
+      <BranchesList 
+        branches={ component.branches.filter(b => !b.inactive_at || new Date(b.inactive_at) > new Date()) } packagingFormat={ application.packaging_format }
+        disabled={ !auth } />
     </>
   )
 }
