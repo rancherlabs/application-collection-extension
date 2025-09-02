@@ -40,6 +40,15 @@ jobs:
         git config --global user.name "Application Collection Bot"
         git config --global user.email "application-collection-bot@users.noreply.github.com"
 
+    - name: Import GPG key
+      id: import_gpg
+      uses: crazy-max/ghaction-import-gpg@v2
+      with:
+        git_user_signingkey: true
+        git_commit_gpgsign: true
+      env:
+        GPG_PRIVATE_KEY: ${{ env.PRIVATE_KEY }}
+
     - name: Generate empty commit
       id: generate-images
       env:
