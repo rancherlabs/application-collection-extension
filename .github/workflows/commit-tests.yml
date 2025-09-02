@@ -30,6 +30,15 @@ jobs:
       with:
         app-id: ${{ env.APP_ID }}
         private-key: ${{ env.PRIVATE_KEY }}
+        owner: ${{ github.repository_owner }}
+        repositories: ${{ github.event.repository.name }}
+
+    - name: Configure Git
+      shell: sh
+      run: |
+        git config --global safe.directory $(pwd)
+        git config --global user.name "Application Collection Bot"
+        git config --global user.email "application-collection-bot@users.noreply.github.com"
 
     - name: Generate empty commit
       id: generate-images
