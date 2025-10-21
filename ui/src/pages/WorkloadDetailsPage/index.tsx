@@ -118,7 +118,7 @@ export default function WorkloadDetailsPage() {
     </>
   }
 
-  const AuthnWrapper = ({ children } : { children: ReactElement }) => !auth ? <Tooltip title='Log in to update this application'><span>{ children }</span></Tooltip> : <>{ children }</>
+  const AuthnWrapper = ({ children } : { children: ReactElement }) => !auth ? <Tooltip title='Go to the extension settings and log in to update this workload'><span>{ children }</span></Tooltip> : <>{ children }</>
 
   return <>
     <Stack direction='row' alignItems='start' justifyContent='space-between'>

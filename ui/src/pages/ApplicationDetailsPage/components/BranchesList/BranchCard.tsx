@@ -21,7 +21,7 @@ export default function BranchCard({ branch, version, artifact, disabled = false
     }
   }
 
-  const AuthnWrapper = ({ children } : { children: ReactElement }) => disabled ? <Tooltip title='Log in to install this application'>{ children }</Tooltip> : <>{ children }</>
+  const AuthnWrapper = ({ children } : { children: ReactElement }) => disabled ? <Tooltip title='Go to the extension settings and log in to install this application'>{ children }</Tooltip> : <>{ children }</>
 
   return (
     <>
