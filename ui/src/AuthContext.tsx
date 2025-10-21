@@ -5,7 +5,7 @@ import { ServiceError } from '@docker/extension-api-client-types/dist/v1'
 type Auth = string | null | undefined
 
 type ReducerAction = {
-  type: 'set' | 'update' | 'delete' | 'dismiss_errors',
+  type: 'set' | 'update' | 'delete',
   payload?: Auth
 }
 
