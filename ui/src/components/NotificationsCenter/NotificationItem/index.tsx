@@ -73,11 +73,13 @@ export default function NotificationItem({ notification, onClose, location }: { 
             </Button>
           </Stack>
           {
-            notification.description.split('\n')
-              .filter(line => line)
-              .map((line, i) => <Typography
-                key={ `desc-line-${i}` }
-                variant='body2'>{ line }</Typography>)
+            typeof notification.description === 'string' ? 
+              notification.description.split('\n')
+                .filter(line => line)
+                .map((line, i) => <Typography
+                  key={ `desc-line-${i}` }
+                  variant='body2'>{ line }</Typography>) :
+              notification.description
           }
         </Stack>
       </CardContent>
