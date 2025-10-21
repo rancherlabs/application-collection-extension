@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=22.0.0"
+    "node": "^24",
+    "npm": "^11"
   },
   "dependencies": {
     "@docker/extension-api-client": "0.3.4",

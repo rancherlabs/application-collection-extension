@@ -2,6 +2,10 @@
   "name": "backend",
   "version": "0.4.1",
   "private": true,
+  "engines": {
+    "node": "^24",
+    "npm": "^11"
+  },
   "scripts": {
     "start": "node ./bin/www",
     "lint": "eslint .",
