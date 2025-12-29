@@ -42,7 +42,7 @@ export default function BranchCard({ branch, version, artifact, disabled = false
                   <Typography variant='h4'>Version { version }</Typography>
                   <Stack direction='row' justifyContent='start' alignItems='center' spacing={ 2 }>
                     <HintIcon tooltip='Branch' icon={ GitBranch as SvgIconComponent } text={ branch.name } />
-                    <HintIcon tooltip='Chart version' icon={ LayersOutlined } text={ `${ artifact.version }-${ artifact.revision }` } />
+                    <HintIcon tooltip='Chart version' icon={ LayersOutlined } text={ artifact.version as string } />
                     <HintIcon tooltip='Last updated' icon={ SyncOutlined } text={ moment(artifact.registered_at).fromNow() } />
                     <HintIcon tooltip='Short digest' icon={ AdjustOutlined } text={ artifact?.digest.value.substring(0, 7) } />
                   </Stack>
