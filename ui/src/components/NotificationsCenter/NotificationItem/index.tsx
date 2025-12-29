@@ -2,7 +2,7 @@ import { Button, Card, CardActions, CardContent, Stack, Typography } from '@mui/
 import { Notification, useNotificationsDispatch } from '../NotificationsContext'
 import StatusIcon from './StatusIcon'
 import moment from 'moment'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { NotificationsOffOutlined, NotificationsOutlined } from '@mui/icons-material'
 
 export default function NotificationItem({ notification, onClose, location }: { notification: Notification, onClose: () => void, location?: string }) {
@@ -16,6 +16,7 @@ export default function NotificationItem({ notification, onClose, location }: { 
       dispatch({ type: 'dismiss', payload: notification })
     }
   }
+
 
   return (
     <Card
@@ -73,13 +74,16 @@ export default function NotificationItem({ notification, onClose, location }: { 
             </Button>
           </Stack>
           {
-            typeof notification.description === 'string' ? 
+            notification.id === '-1' ? 
+              <div>
+                <Typography variant='body2'>Log in through the <Link to='/settings'>Settings</Link> section to start installing and upgrading applications from the collection.</Typography>
+                <Typography variant='body2' sx={ { mt: 1 } }>Find more at https://docs.apps.rancher.io/</Typography>
+              </div> :
               notification.description.split('\n')
                 .filter(line => line)
                 .map((line, i) => <Typography
                   key={ `desc-line-${i}` }
-                  variant='body2'>{ line }</Typography>) :
-              notification.description
+                  variant='body2'>{ line }</Typography>)
           }
         </Stack>
       </CardContent>
