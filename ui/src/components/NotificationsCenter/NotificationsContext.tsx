@@ -1,12 +1,10 @@
 import { createDockerDesktopClient } from '@docker/extension-api-client'
-import { Typography } from '@mui/material'
 import { createContext, Dispatch, useContext, useEffect, useReducer } from 'react'
-import { Link } from 'react-router-dom'
 
 export type Notification = {
   id: string,
   title: string,
-  description: string | React.ReactNode,
+  description: string,
   type: 'info' | 'progress' | 'success' | 'warning' | 'error',
   dismissed: boolean,
   timestamp: number,
@@ -110,10 +108,7 @@ export default function NotificationsProvider({ children }: { children: React.Re
           const welcomeNotification: Notification = {
             id: '-1',
             title: 'Welcome to Application Collection extension!',
-            description: <>
-              <Typography variant='body2'>Log in through the <Link to='/settings'>Settings</Link> section to start installing and upgrading applications from the collection.</Typography>
-              <Typography variant='body2' sx={ { mt: 1 } }>Find more at https://docs.apps.rancher.io/</Typography>
-            </>,
+            description: '',
             type: 'info',
             dismissed: false,
             timestamp: new Date().getTime()
