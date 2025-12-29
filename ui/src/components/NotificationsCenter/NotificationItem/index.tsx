@@ -17,7 +17,6 @@ export default function NotificationItem({ notification, onClose, location }: { 
     }
   }
 
-
   return (
     <Card
       variant='outlined' 
