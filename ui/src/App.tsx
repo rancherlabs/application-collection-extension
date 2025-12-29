@@ -18,6 +18,13 @@ const themeOptions = (mode: 'light' | 'dark' = 'light') => {
           root: 'line-height: initial;'
         }
       },
+      MuiAccordion: {
+        styleOverrides: {
+          root: {
+            backgroundColor: 'transparent'
+          }
+        }
+      },
       MuiCardActionArea: {
         styleOverrides: {
           focusHighlight: {
