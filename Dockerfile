@@ -18,12 +18,11 @@ ENV KUBECTL_WINDOWS_AMD64_CHECKSUM=db6d96f65a86426e6c9484ca88a233aa7f160025f40c2
 ENV KUBECTL_WINDOWS_ARM64_CHECKSUM=90a2b6eb214c895381cc63b5fd8653fa6a89cc4afc7c732ff726fe3a56ff86b4
 
 RUN mkdir -p ${BINS_DIR}
-RUN HELM_ARCH_UPPER=$(echo "${TARGETARCH}" | tr '[:lower:]' '[:upper:]') \
-    && HELM_CHECKSUM_VAR="HELM_MACOS_${HELM_ARCH_UPPER}_CHECKSUM" \
-    && HELM_CHECKSUM=$(printenv "${HELM_CHECKSUM_VAR}") \
-    && KUBECTL_ARCH_UPPER=$(echo "${TARGETARCH}" | tr '[:lower:]' '[:upper:]') \
-    && KUBECTL_CHECKSUM_VAR="KUBECTL_MACOS_${KUBECTL_ARCH_UPPER}_CHECKSUM" \
-    && KUBECTL_CHECKSUM=$(printenv "${KUBECTL_CHECKSUM_VAR}") \
+RUN TARGETARCH_UPPER=${TARGETARCH^^} \
+    && HELM_CHECKSUM_VAR="HELM_MACOS_${TARGETARCH_UPPER}_CHECKSUM" \
+    && HELM_CHECKSUM=${!HELM_CHECKSUM_VAR} \
+    && KUBECTL_CHECKSUM_VAR="KUBECTL_MACOS_${TARGETARCH_UPPER}_CHECKSUM" \
+    && KUBECTL_CHECKSUM=${!KUBECTL_CHECKSUM_VAR} \
     && curl -s -o helm-v${HELM_VERSION}-darwin-${TARGETARCH}.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-darwin-${TARGETARCH}.tar.gz \
     && echo "${HELM_CHECKSUM}  helm-v${HELM_VERSION}-darwin-${TARGETARCH}.tar.gz" | sha256sum -c - \
     && tar -zxvf helm-v${HELM_VERSION}-darwin-${TARGETARCH}.tar.gz \
@@ -35,12 +34,11 @@ RUN HELM_ARCH_UPPER=$(echo "${TARGETARCH}" | tr '[:lower:]' '[:upper:]') \
 
 ENV BINS_DIR=/tmp/binaries/linux
 RUN mkdir -p ${BINS_DIR}
-RUN HELM_ARCH_UPPER=$(echo "${TARGETARCH}" | tr '[:lower:]' '[:upper:]') \
-    && HELM_CHECKSUM_VAR="HELM_LINUX_${HELM_ARCH_UPPER}_CHECKSUM" \
-    && HELM_CHECKSUM=$(printenv "${HELM_CHECKSUM_VAR}") \
-    && KUBECTL_ARCH_UPPER=$(echo "${TARGETARCH}" | tr '[:lower:]' '[:upper:]') \
-    && KUBECTL_CHECKSUM_VAR="KUBECTL_LINUX_${KUBECTL_ARCH_UPPER}_CHECKSUM" \
-    && KUBECTL_CHECKSUM=$(printenv "${KUBECTL_CHECKSUM_VAR}") \
+RUN TARGETARCH_UPPER=${TARGETARCH^^} \
+    && HELM_CHECKSUM_VAR="HELM_LINUX_${TARGETARCH_UPPER}_CHECKSUM" \
+    && HELM_CHECKSUM=${!HELM_CHECKSUM_VAR} \
+    && KUBECTL_CHECKSUM_VAR="KUBECTL_LINUX_${TARGETARCH_UPPER}_CHECKSUM" \
+    && KUBECTL_CHECKSUM=${!KUBECTL_CHECKSUM_VAR} \
     && curl -s -o helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz \
     && echo "${HELM_CHECKSUM}  helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz" | sha256sum -c - \
     && tar -zxvf helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz \
@@ -52,12 +50,11 @@ RUN HELM_ARCH_UPPER=$(echo "${TARGETARCH}" | tr '[:lower:]' '[:upper:]') \
 
 ENV BINS_DIR=/tmp/binaries/windows
 RUN mkdir -p ${BINS_DIR}
-RUN HELM_ARCH_UPPER=$(echo "${TARGETARCH}" | tr '[:lower:]' '[:upper:]') \
-    && HELM_CHECKSUM_VAR="HELM_WINDOWS_${HELM_ARCH_UPPER}_CHECKSUM" \
-    && HELM_CHECKSUM=$(printenv "${HELM_CHECKSUM_VAR}") \
-    && KUBECTL_ARCH_UPPER=$(echo "${TARGETARCH}" | tr '[:lower:]' '[:upper:]') \
-    && KUBECTL_CHECKSUM_VAR="KUBECTL_WINDOWS_${KUBECTL_ARCH_UPPER}_CHECKSUM" \
-    && KUBECTL_CHECKSUM=$(printenv "${KUBECTL_CHECKSUM_VAR}") \
+RUN TARGETARCH_UPPER=${TARGETARCH^^} \
+    && HELM_CHECKSUM_VAR="HELM_WINDOWS_${TARGETARCH_UPPER}_CHECKSUM" \
+    && HELM_CHECKSUM=${!HELM_CHECKSUM_VAR} \
+    && KUBECTL_CHECKSUM_VAR="KUBECTL_WINDOWS_${TARGETARCH_UPPER}_CHECKSUM" \
+    && KUBECTL_CHECKSUM=${!KUBECTL_CHECKSUM_VAR} \
     && curl -s -o helm-v${HELM_VERSION}-windows-${TARGETARCH}.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-windows-${TARGETARCH}.tar.gz \
     && echo "${HELM_CHECKSUM}  helm-v${HELM_VERSION}-windows-${TARGETARCH}.tar.gz" | sha256sum -c - \
     && tar -zxvf helm-v${HELM_VERSION}-windows-${TARGETARCH}.tar.gz \
