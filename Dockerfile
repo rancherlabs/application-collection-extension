@@ -3,31 +3,64 @@ FROM registry.suse.com/bci/bci-base:15.6 AS fetcher
 ARG TARGETARCH
 ENV BINS_DIR=/tmp/binaries/darwin
 ENV HELM_VERSION=3.17.3
+ENV HELM_MACOS_AMD64_CHECKSUM=20ef8df4671349a6fc556a621be1170dd709c6c0cf5f7e83a2d9fb0515fd97fc
+ENV HELM_MACOS_ARM64_CHECKSUM=89aec43ce07b06239f1bba4a6507236bb48ae487bc5065a8e254d3ce58a16997
+ENV HELM_LINUX_AMD64_CHECKSUM=ee88b3c851ae6466a3de507f7be73fe94d54cbf2987cbaa3d1a3832ea331f2cd
+ENV HELM_LINUX_ARM64_CHECKSUM=7944e3defd386c76fd92d9e6fec5c2d65a323f6fadc19bfb5e704e3eee10348e
+ENV HELM_WINDOWS_AMD64_CHECKSUM=2230bf0044fa73f564b9fdb96df76e1736531de873993cc1941e9882a34c85b1
+ENV HELM_WINDOWS_ARM64_CHECKSUM=0d8c1d20bf4ca0b553eb0b3b4c21db503a934610d3428b1c9f924f42b2a43b45
 ENV KUBECTL_VERSION=1.33.0
+ENV KUBECTL_MACOS_AMD64_CHECKSUM=950850b17ba710101d1a403d126a5689556814c53c4c6f4c2b0224652add84b6
+ENV KUBECTL_MACOS_ARM64_CHECKSUM=007746617abc12746dd80ad6c261c2b062269688d44c0b97aa47108c562b07c1
+ENV KUBECTL_LINUX_AMD64_CHECKSUM=9efe8d3facb23e1618cba36fb1c4e15ac9dc3ed5a2c2e18109e4a66b2bac12dc
+ENV KUBECTL_LINUX_ARM64_CHECKSUM=48541d119455ac5bcc5043275ccda792371e0b112483aa0b29378439cf6322b9
+ENV KUBECTL_WINDOWS_AMD64_CHECKSUM=db6d96f65a86426e6c9484ca88a233aa7f160025f40c20b153c5bf4f9746c791
+ENV KUBECTL_WINDOWS_ARM64_CHECKSUM=90a2b6eb214c895381cc63b5fd8653fa6a89cc4afc7c732ff726fe3a56ff86b4
 
 RUN mkdir -p ${BINS_DIR}
-RUN curl -s -o helm-v${HELM_VERSION}-darwin-${TARGETARCH}.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-darwin-${TARGETARCH}.tar.gz \
+RUN TARGETARCH_UPPER=${TARGETARCH^^} \
+    && HELM_CHECKSUM_VAR="HELM_MACOS_${TARGETARCH_UPPER}_CHECKSUM" \
+    && HELM_CHECKSUM=${!HELM_CHECKSUM_VAR} \
+    && KUBECTL_CHECKSUM_VAR="KUBECTL_MACOS_${TARGETARCH_UPPER}_CHECKSUM" \
+    && KUBECTL_CHECKSUM=${!KUBECTL_CHECKSUM_VAR} \
+    && curl -s -o helm-v${HELM_VERSION}-darwin-${TARGETARCH}.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-darwin-${TARGETARCH}.tar.gz \
+    && echo "${HELM_CHECKSUM}  helm-v${HELM_VERSION}-darwin-${TARGETARCH}.tar.gz" | sha256sum -c - \
     && tar -zxvf helm-v${HELM_VERSION}-darwin-${TARGETARCH}.tar.gz \
     && mv darwin-${TARGETARCH}/helm ${BINS_DIR}/helm \
     && curl -LO "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/darwin/${TARGETARCH}/kubectl" \
+    && echo "${KUBECTL_CHECKSUM}  kubectl" | sha256sum -c - \
     && chmod +x ./kubectl \
     && mv kubectl ${BINS_DIR}/kubectl
 
 ENV BINS_DIR=/tmp/binaries/linux
 RUN mkdir -p ${BINS_DIR}
-RUN curl -s -o helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz \
+RUN TARGETARCH_UPPER=${TARGETARCH^^} \
+    && HELM_CHECKSUM_VAR="HELM_LINUX_${TARGETARCH_UPPER}_CHECKSUM" \
+    && HELM_CHECKSUM=${!HELM_CHECKSUM_VAR} \
+    && KUBECTL_CHECKSUM_VAR="KUBECTL_LINUX_${TARGETARCH_UPPER}_CHECKSUM" \
+    && KUBECTL_CHECKSUM=${!KUBECTL_CHECKSUM_VAR} \
+    && curl -s -o helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz \
+    && echo "${HELM_CHECKSUM}  helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz" | sha256sum -c - \
     && tar -zxvf helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz \
     && mv linux-${TARGETARCH}/helm ${BINS_DIR}/helm \
     && curl -LO "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${TARGETARCH}/kubectl" \
+    && echo "${KUBECTL_CHECKSUM}  kubectl" | sha256sum -c - \
     && chmod +x ./kubectl \
     && mv kubectl ${BINS_DIR}/kubectl
 
 ENV BINS_DIR=/tmp/binaries/windows
 RUN mkdir -p ${BINS_DIR}
-RUN curl -s -o helm-v${HELM_VERSION}-windows-amd64.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-windows-amd64.tar.gz \
-    && tar -zxvf helm-v${HELM_VERSION}-windows-amd64.tar.gz \
-    && mv windows-amd64/helm.exe ${BINS_DIR}/helm.exe \
-    && curl -LO "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/windows/amd64/kubectl.exe" \
+RUN TARGETARCH_UPPER=${TARGETARCH^^} \
+    && HELM_CHECKSUM_VAR="HELM_WINDOWS_${TARGETARCH_UPPER}_CHECKSUM" \
+    && HELM_CHECKSUM=${!HELM_CHECKSUM_VAR} \
+    && KUBECTL_CHECKSUM_VAR="KUBECTL_WINDOWS_${TARGETARCH_UPPER}_CHECKSUM" \
+    && KUBECTL_CHECKSUM=${!KUBECTL_CHECKSUM_VAR} \
+    && curl -s -o helm-v${HELM_VERSION}-windows-${TARGETARCH}.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-windows-${TARGETARCH}.tar.gz \
+    && echo "${HELM_CHECKSUM}  helm-v${HELM_VERSION}-windows-${TARGETARCH}.tar.gz" | sha256sum -c - \
+    && tar -zxvf helm-v${HELM_VERSION}-windows-${TARGETARCH}.tar.gz \
+    && mv windows-${TARGETARCH}/helm.exe ${BINS_DIR}/helm.exe \
+    && curl -LO "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/windows/${TARGETARCH}/kubectl.exe" \
+    && echo "${KUBECTL_CHECKSUM}  kubectl.exe" | sha256sum -c - \
     && mv kubectl.exe ${BINS_DIR}/kubectl.exe
 
 FROM --platform=$BUILDPLATFORM openapitools/openapi-generator-cli:v7.14.0 AS backend-client-generator
